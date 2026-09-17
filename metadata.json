@@ -1,0 +1,6 @@
+{
+  "name": "BHUदृष्टि",
+  "description": "AI-powered Remote Sensing analyzer for high-resolution satellite imagery using vision-language models and natural language text queries with zero local GPU load.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
