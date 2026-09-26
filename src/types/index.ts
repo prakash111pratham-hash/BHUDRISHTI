@@ -173,3 +173,46 @@ export interface AnalysisRecord {
   spectralBand: string;
   timestamp: number;
 }
+
+export type ActivePage = 'CONSOLE' | 'TEMPORAL' | 'DOSSIER' | 'ASSISTANTS';
+
+export interface InspectorPoint {
+  xPct: number;
+  yPct: number;
+  coordinates: string;
+  ndvi: number;
+  ndwi: number;
+  ndbi: number;
+  surfaceTemp: number;
+  surfaceType: string;
+  confidence: number;
+  colorHex: string;
+}
+
+export interface TemporalYearData {
+  year: number;
+  label: string;
+  waterLevelDelta: number; // percentage change relative to baseline
+  vegetationDelta: number;
+  urbanDensityDelta: number;
+  avgTempCelsius: number;
+  riskSeverity: 'LOW' | 'MODERATE' | 'SEVERE' | 'CRITICAL';
+  briefing: string;
+}
+
+export interface LocationRevisitRecord {
+  id: string;
+  sceneId: string;
+  locationName: string;
+  coordinates: string;
+  initialTimestamp: number;
+  recentTimestamp: number;
+  yearsSpan: number;
+  canopyLossPct: number;
+  urbanExpansionPct: number;
+  waterMoistureShiftPct: number;
+  temperatureDriftCelsius: number;
+  aiComparativeAssessment: string;
+  pastImageSrc: string;
+  recentImageSrc: string;
+}
