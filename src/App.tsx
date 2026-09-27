@@ -13,6 +13,7 @@ import {
 import {
   clearAllSavedAnalyses,
   deleteSavedAnalysis,
+  detectImageLocation,
   executeFollowUpQuestion,
   executeSceneAnalysis,
   fetchMapsGrounding,
@@ -23,11 +24,10 @@ import {
 } from './services/apiService';
 import { Navbar } from './components/Navbar';
 import { TelemetryBadgeRow } from './components/TelemetryBadgeRow';
-import { SatelliteViewport } from './components/SatelliteViewport';
+import { CommandConsoleDashboard } from './components/CommandConsoleDashboard';
 import { SplitLensViewer } from './components/SplitLensViewer';
 import { SpectralModeSelector } from './components/SpectralModeSelector';
 import { SceneSelectorRow } from './components/SceneSelectorRow';
-import { QueryConsole } from './components/QueryConsole';
 import { IdleExplanationCard } from './components/IdleExplanationCard';
 import { AnalyzingStateCard, ErrorStateCard } from './components/AnalyzingStateCard';
 import { AnalysisResultCard } from './components/AnalysisResultCard';
@@ -49,7 +49,6 @@ export function App() {
   const [userQuery, setUserQuery] = useState<string>('');
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
   const [isFollowUpLoading, setIsFollowUpLoading] = useState<boolean>(false);
-  const [isRadarScanActive, setIsRadarScanActive] = useState<boolean>(true);
   const [customApiKey, setCustomApiKey] = useState<string>(getStoredApiKey());
   const [savedAnalyses, setSavedAnalyses] = useState<AnalysisRecord[]>(getSavedAnalyses());
   const [toastMessage, setToastMessage] = useState<string | null>(null);
@@ -110,11 +109,48 @@ export function App() {
     setCurrentScene(customScene);
     setAnalysisStatus('idle');
     setAnalysisResult(null);
-    setToastMessage(`Imported "${customScene.title}". Ready for AI inspection.`);
+    setToastMessage(`Imported "${customScene.title}". Detecting Google Maps location...`);
+
+    // Automatically analyze image to detect exact real-world Google Maps location & coordinates
+    detectImageLocation(dataUrl, customApiKey, name, undefined, name).then((detected) => {
+      if (detected) {
+        setScenes((prev) =>
+          prev.map((s) =>
+            s.id === customScene.id
+              ? {
+                  ...s,
+                  title: detected.locationName.split(',')[0] || s.title,
+                  geographicLocation: detected.locationName,
+                  coordinates: detected.coordinates,
+                  googleMapsUrl: detected.googleMapsUrl,
+                  embedMapsUrl: detected.embedUrl,
+                  satelliteEmbedUrl: detected.satelliteEmbedUrl,
+                  detectedLocation: detected
+                }
+              : s
+          )
+        );
+        setCurrentScene((curr) =>
+          curr.id === customScene.id
+            ? {
+                ...curr,
+                title: detected.locationName.split(',')[0] || curr.title,
+                geographicLocation: detected.locationName,
+                coordinates: detected.coordinates,
+                googleMapsUrl: detected.googleMapsUrl,
+                embedMapsUrl: detected.embedUrl,
+                satelliteEmbedUrl: detected.satelliteEmbedUrl,
+                detectedLocation: detected
+              }
+            : curr
+        );
+        setToastMessage(`Geolocated on Google Maps: ${detected.locationName} (${detected.coordinates})`);
+      }
+    });
   };
 
   const handleRunAnalysis = async (queryToRun?: string) => {
-    const prompt = (queryToRun || userQuery).trim();
+    const prompt = (queryToRun || userQuery || currentScene.defaultQuerySuggestions[0]).trim();
     if (!prompt) {
       setToastMessage('Please enter an observation query');
       return;
@@ -161,7 +197,7 @@ export function App() {
     if (!analysisResult) return;
     setIsGroundingLoading(true);
     try {
-      const uri = await fetchMapsGrounding(
+      const grounding = await fetchMapsGrounding(
         currentScene,
         customApiKey
       );
@@ -169,8 +205,8 @@ export function App() {
         prev
           ? {
               ...prev,
-              googleMapsLocationUri: uri,
-              googleMapsGroundingSummary: `Verified coordinates against Google Maps Platform database: ${currentScene.geographicLocation}.`
+              googleMapsLocationUri: grounding.mapsUri || currentScene.googleMapsUrl,
+              googleMapsGroundingSummary: grounding.summary
             }
           : null
       );
@@ -248,8 +284,8 @@ export function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F0F7FF] text-[#0A2239] pb-12 flex flex-col font-sans">
-      {/* Navigation Top Bar with Operations Hammer */}
+    <div className="min-h-screen bg-[#060D1A] text-slate-100 pb-12 flex flex-col font-sans">
+      {/* Navigation Top Bar with BHUदृष्टि & Workstations Menu */}
       <Navbar
         activePage={activePage}
         onSelectPage={(p) => setActivePage(p)}
@@ -261,115 +297,79 @@ export function App() {
       />
 
       <main className="flex-1 w-full flex flex-col items-center">
-        {/* PAGE 1: MISSION CONSOLE */}
+        {/* PAGE 1: MISSION CONSOLE (3-COLUMN COMMAND CENTER LAYOUT) */}
         {activePage === 'CONSOLE' && (
           <div className="w-full flex flex-col items-center">
-            {/* Live Telemetry Badges */}
+            {/* Live Telemetry Badges Sub-header */}
             <TelemetryBadgeRow
               gsdResolution={currentScene.gsdResolution}
               spectralModeLabel={SPECTRAL_MODES[spectralMode].label}
+              showSplitLens={showSplitLens}
+              onToggleSplitLens={() => setShowSplitLens((s) => !s)}
             />
 
-            {/* Split-Lens Toggle Ribbon */}
-            <div className="w-full max-w-5xl mx-auto px-4 pt-1 flex items-center justify-between text-xs">
-              <span className="text-[#708FAE] font-mono font-medium">
-                SATELLITE WORKSTATION // {currentScene.satellitePlatform}
-              </span>
-
-              <button
-                onClick={() => setShowSplitLens(!showSplitLens)}
-                className={`px-3 py-1 rounded-xl border text-xs font-bold transition-all shadow-2xs cursor-pointer ${
-                  showSplitLens
-                    ? 'bg-[#0288D1] text-white border-[#0288D1]'
-                    : 'bg-white text-[#0288D1] border-[#D0E4F8] hover:bg-[#F0F7FF]'
-                }`}
-              >
-                {showSplitLens ? 'Show Standard Viewport' : '🛰️ Open Split-Lens Spectral Slider'}
-              </button>
-            </div>
-
-            {/* Standard Viewport or Split-Lens Slider */}
-            {!showSplitLens ? (
-              <SatelliteViewport
-                scene={currentScene}
-                spectralMode={spectralMode}
-                isRadarScanActive={isRadarScanActive}
-                onToggleRadarScan={() => setIsRadarScanActive((prev) => !prev)}
-                onAskAboutPoint={handleAskAboutPoint}
-              />
-            ) : (
-              <div className="w-full max-w-5xl mx-auto px-4 py-2">
+            {/* Split-Lens Comparator View (If toggled) */}
+            {showSplitLens && (
+              <div className="w-full max-w-[1520px] mx-auto px-4 py-2">
                 <SplitLensViewer scene={currentScene} />
               </div>
             )}
 
-            {/* Spectral Band Simulation Selector */}
-            <SpectralModeSelector
-              selectedMode={spectralMode}
-              onModeSelected={(mode) => setSpectralMode(mode)}
-            />
-
-            {/* Target Scene Selector Row */}
-            <SceneSelectorRow
-              scenes={scenes}
-              selectedScene={currentScene}
-              onSceneSelected={handleSelectScene}
-              onCustomImageSelected={handleCustomImageSelected}
-            />
-
-            {/* AI Remote Sensing Query Console */}
-            <QueryConsole
+            {/* 3-Column Command Dashboard Layout matching user screenshot */}
+            <CommandConsoleDashboard
+              scene={currentScene}
+              allScenes={scenes}
+              onSelectScene={handleSelectScene}
+              spectralMode={spectralMode}
+              onSelectSpectralMode={setSpectralMode}
               userQuery={userQuery}
-              onQueryChange={(q) => setUserQuery(q)}
-              suggestions={currentScene.defaultQuerySuggestions}
-              isAnalyzing={analysisStatus === 'analyzing'}
+              onQueryChange={setUserQuery}
               onAnalyze={handleRunAnalysis}
+              isAnalyzing={analysisStatus === 'analyzing'}
+              onAskAboutPoint={handleAskAboutPoint}
+              onCustomImageSelected={handleCustomImageSelected}
+              customApiKey={customApiKey}
             />
 
-            {/* Result State Section */}
-            {analysisStatus === 'idle' && (
-              <IdleExplanationCard
-                onQuickStart={() =>
-                  handleRunAnalysis(currentScene.defaultQuerySuggestions[0])
-                }
-              />
-            )}
+            {/* Result State Section below Command Center */}
+            <div className="w-full max-w-[1520px] mx-auto px-4 pt-2">
+              {analysisStatus === 'analyzing' && <AnalyzingStateCard />}
 
-            {analysisStatus === 'analyzing' && <AnalyzingStateCard />}
+              {analysisStatus === 'success' && analysisResult && (
+                <div className="mt-2">
+                  <AnalysisResultCard
+                    result={analysisResult}
+                    chatMessages={chatMessages}
+                    isFollowUpLoading={isFollowUpLoading}
+                    onSendFollowUp={handleSendFollowUp}
+                    onSaveReport={handleSaveReport}
+                    isGroundingLoading={isGroundingLoading}
+                    onFetchGrounding={handleFetchGrounding}
+                  />
+                </div>
+              )}
 
-            {analysisStatus === 'success' && analysisResult && (
-              <AnalysisResultCard
-                result={analysisResult}
-                chatMessages={chatMessages}
-                isFollowUpLoading={isFollowUpLoading}
-                onSendFollowUp={handleSendFollowUp}
-                onSaveReport={handleSaveReport}
-                isGroundingLoading={isGroundingLoading}
-                onFetchGrounding={handleFetchGrounding}
-              />
-            )}
-
-            {analysisStatus === 'error' && (
-              <ErrorStateCard
-                errorMessage={errorMessage}
-                onRetry={() => handleRunAnalysis()}
-              />
-            )}
+              {analysisStatus === 'error' && (
+                <div className="mt-2">
+                  <ErrorStateCard
+                    errorMessage={errorMessage}
+                    onRetry={() => handleRunAnalysis()}
+                  />
+                </div>
+              )}
+            </div>
           </div>
         )}
 
         {/* PAGE 2: TEMPORAL LAB */}
         {activePage === 'TEMPORAL' && (
           <div className="w-full flex flex-col items-center">
-            {/* Target Scene Selector Row */}
             <SceneSelectorRow
               scenes={scenes}
               selectedScene={currentScene}
               onSceneSelected={handleSelectScene}
               onCustomImageSelected={handleCustomImageSelected}
             />
-
-            {/* 3D Multi-Temporal Change & Environmental Simulator */}
             <TemporalChangeLab scene={currentScene} />
           </div>
         )}
@@ -377,15 +377,12 @@ export function App() {
         {/* PAGE 3: INTELLIGENCE DOSSIER */}
         {activePage === 'DOSSIER' && (
           <div className="w-full flex flex-col items-center">
-            {/* Target Scene Selector Row */}
             <SceneSelectorRow
               scenes={scenes}
               selectedScene={currentScene}
               onSceneSelected={handleSelectScene}
               onCustomImageSelected={handleCustomImageSelected}
             />
-
-            {/* Classified ISRO Research Dossier & Voice Audio Briefing */}
             <MissionIntelligenceDossier
               scene={currentScene}
               result={analysisResult}
@@ -396,15 +393,12 @@ export function App() {
         {/* PAGE 4: ORBITAL ASSISTANTS & MULTI-YEAR REVISIT */}
         {activePage === 'ASSISTANTS' && (
           <div className="w-full flex flex-col items-center">
-            {/* Target Scene Selector Row */}
             <SceneSelectorRow
               scenes={scenes}
               selectedScene={currentScene}
               onSceneSelected={handleSelectScene}
               onCustomImageSelected={handleCustomImageSelected}
             />
-
-            {/* Rover Drishti-1 Robot Chatbot + Deep Recon AI + Historical Revisit */}
             <OrbitalAssistantsAndRevisit
               scene={currentScene}
               customApiKey={customApiKey}
@@ -432,7 +426,7 @@ export function App() {
         />
       )}
 
-      {/* Cinematic 3D Earth Scan Opening Overlay */}
+      {/* Cinematic High-Quality Video Opening with Thruster Shake & White Flash */}
       {showCinematicOpening && (
         <EarthScanCinematicOpening
           onEnterApp={() => setShowCinematicOpening(false)}
@@ -441,7 +435,8 @@ export function App() {
 
       {/* Toast Notification */}
       {toastMessage && (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-[#0A2239] text-white px-4 py-2.5 rounded-xl shadow-xl text-[12px] font-medium animate-in fade-in slide-in-from-bottom-2 duration-150 border border-[#D0E4F8]/20 flex items-center gap-2">
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-[#0C172A] text-white px-4 py-2.5 rounded-xl shadow-2xl text-[12px] font-medium animate-in fade-in slide-in-from-bottom-2 duration-150 border border-[#00B0FF]/40 flex items-center gap-2">
+          <span className="w-2 h-2 rounded-full bg-[#00E5FF] animate-pulse" />
           <span>{toastMessage}</span>
         </div>
       )}

@@ -104,8 +104,12 @@ function parseGeminiRawResponse(
   const landCoverList: LandCoverCategory[] = [];
   const risks: string[] = [];
   const recommendations: string[] = [];
+  let detectedPlace = '';
+  let detectedCoordinates = '';
+  let detectedDecimal = '';
+  const detectedLandmarks: string[] = [];
 
-  let section = 0; // 1: summary, 2: observations, 3: land cover, 4: risks, 5: recommendations
+  let section = 0; // 1: summary, 2: observations, 3: land cover, 4: risks, 5: recommendations, 6: geolocation
 
   for (const line of lines) {
     const lower = line.toLowerCase();
@@ -113,6 +117,10 @@ function parseGeminiRawResponse(
       section = 1;
       const content = line.substring(line.indexOf(':') + 1).trim();
       if (content) summaryText += content + ' ';
+      continue;
+    }
+    if (lower.startsWith('geolocation:')) {
+      section = 6;
       continue;
     }
     if (lower.startsWith('observations:') || lower.includes('notable features:')) {
@@ -135,6 +143,17 @@ function parseGeminiRawResponse(
     if (section === 1) {
       if (!line.startsWith('-') && !line.startsWith('*')) {
         summaryText += line + ' ';
+      }
+    } else if (section === 6) {
+      if (lower.includes('place:')) {
+        detectedPlace = line.substring(line.indexOf(':') + 1).trim();
+      } else if (lower.includes('coordinates:')) {
+        detectedCoordinates = line.substring(line.indexOf(':') + 1).trim();
+      } else if (lower.includes('decimal:')) {
+        detectedDecimal = line.substring(line.indexOf(':') + 1).trim();
+      } else if (lower.includes('landmarks:') || line.startsWith('-')) {
+        const item = line.replace(/^[-*•\d.]+\s*/, '').replace(/.*landmarks:\s*/i, '').trim();
+        if (item) detectedLandmarks.push(item);
       }
     } else if (section === 2) {
       if (line.startsWith('-') || line.startsWith('*') || /^\d+\./.test(line)) {
@@ -212,6 +231,14 @@ function parseGeminiRawResponse(
     recommendations.push('Cross-reference optical indexes with ground-truth survey points.');
   }
 
+  const finalCoords = detectedCoordinates || scene.coordinates || 'Orbital Lat/Lon Calibrated';
+  const finalPlace = detectedPlace || scene.geographicLocation || scene.title;
+  const mapsQuery = detectedDecimal ? detectedDecimal : encodeURIComponent(finalCoords);
+  const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${mapsQuery}`;
+  const embedUrl = detectedDecimal
+    ? `https://maps.google.com/maps?q=${detectedDecimal}&hl=en&z=14&output=embed`
+    : scene.embedMapsUrl || `https://maps.google.com/maps?q=${encodeURIComponent(finalPlace)}&hl=en&z=14&output=embed`;
+
   return {
     query,
     plainSummary: summaryText.trim(),
@@ -229,10 +256,13 @@ function parseGeminiRawResponse(
     surfaceTempCelsius: pixelMetrics.estimatedTempCelsius,
     radiometricQuality: 99.1,
     processingLevel: 'Level-2A (Cloud Multimodal BOA)',
-    geoCoordinates: scene.coordinates || 'Orbital Lat/Lon Calibrated',
-    geographicRegion: scene.title,
-    googleMapsLocationUri: scene.googleMapsUrl || 'https://www.google.com/maps',
-    googleMapsGroundingSummary: `AI vision inference grounded with spectral coordinate layers for ${scene.title}.`
+    geoCoordinates: finalCoords,
+    geographicRegion: finalPlace,
+    googleMapsLocationUri: mapsUrl,
+    embedMapsUrl: embedUrl,
+    googleMapsGroundingSummary: detectedPlace
+      ? `Google Maps Verified Location: ${detectedPlace} at coordinates ${finalCoords}.${detectedLandmarks.length > 0 ? ` Vicinity: ${detectedLandmarks.join(', ')}.` : ''}`
+      : `AI vision inference grounded with spectral coordinate layers for ${scene.title}.`
   };
 }
 
@@ -309,7 +339,8 @@ export async function executeFollowUpQuestion(
   scene: SatelliteScene,
   historyText: string,
   question: string,
-  customApiKey?: string
+  customApiKey?: string,
+  taskComplexity: 'fast' | 'general' | 'complex' = 'general'
 ): Promise<string> {
   let metrics: PixelMetrics;
   try {
@@ -337,7 +368,8 @@ export async function executeFollowUpQuestion(
         conversationHistory: historyText,
         followUpQuestion: question,
         sceneTitle: scene.title,
-        customApiKey
+        customApiKey,
+        taskComplexity
       })
     });
 
@@ -355,10 +387,19 @@ export async function executeFollowUpQuestion(
   return answerFollowUpFromPixels(metrics, scene.title, question);
 }
 
+export interface GroundingResult {
+  summary: string;
+  mapsUri?: string;
+  embedUrl?: string;
+  satelliteEmbedUrl?: string;
+  coordinates?: string;
+  model?: string;
+}
+
 export async function fetchMapsGrounding(
   scene: SatelliteScene,
   customApiKey?: string
-): Promise<string> {
+): Promise<GroundingResult> {
   try {
     const headers: Record<string, string> = { 'Content-Type': 'application/json' };
     if (customApiKey) {
@@ -371,6 +412,7 @@ export async function fetchMapsGrounding(
       body: JSON.stringify({
         coordinates: scene.coordinates,
         locationTitle: scene.title,
+        geographicLocation: scene.geographicLocation,
         customApiKey
       })
     });
@@ -378,12 +420,81 @@ export async function fetchMapsGrounding(
     if (response.ok) {
       const data = await response.json();
       if (data.success && data.summary) {
-        return data.summary;
+        return {
+          summary: data.summary,
+          mapsUri: data.googleMapsUri || scene.googleMapsUrl,
+          embedUrl: data.embedUrl || scene.embedMapsUrl,
+          satelliteEmbedUrl: data.satelliteEmbedUrl,
+          coordinates: data.coordinates || scene.coordinates,
+          model: data.model
+        };
       }
     }
   } catch (err) {
     console.warn('Maps grounding network call failed:', err);
   }
 
-  return `Google Maps Grounding: Coordinates ${scene.coordinates} resolve to target Earth Observation sector (${scene.title}) with verified geospatial alignment across satellite and terrain reference layers.`;
+  return {
+    summary: `Google Maps Grounding: Coordinates ${scene.coordinates} resolve to target Earth Observation sector (${scene.title}) with verified geospatial alignment across satellite and terrain reference layers.`,
+    mapsUri: scene.googleMapsUrl,
+    embedUrl: scene.embedMapsUrl,
+    coordinates: scene.coordinates
+  };
+}
+
+export interface DetectedLocationResult {
+  locationName: string;
+  coordinates: string;
+  latitude: number;
+  longitude: number;
+  googleMapsUrl: string;
+  embedUrl: string;
+  satelliteEmbedUrl?: string;
+  vicinityLandmarks: string[];
+  bodiesOfWater: string[];
+  transitArteries: string[];
+  topologicalSummary: string;
+}
+
+export async function detectImageLocation(
+  imageSrc: string,
+  customApiKey?: string,
+  sceneTitle?: string,
+  coordinatesHint?: string,
+  locationHint?: string
+): Promise<DetectedLocationResult | null> {
+  try {
+    const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+    if (customApiKey) {
+      headers['x-custom-api-key'] = customApiKey;
+    }
+
+    const response = await fetch('/api/detect-location', {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({ imageSrc, customApiKey, sceneTitle, coordinatesHint, locationHint })
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      if (data.success && data.locationName) {
+        return {
+          locationName: data.locationName,
+          coordinates: data.coordinates,
+          latitude: data.latitude,
+          longitude: data.longitude,
+          googleMapsUrl: data.googleMapsUrl,
+          embedUrl: data.embedUrl,
+          satelliteEmbedUrl: data.satelliteEmbedUrl,
+          vicinityLandmarks: data.vicinityLandmarks || [],
+          bodiesOfWater: data.bodiesOfWater || [],
+          transitArteries: data.transitArteries || [],
+          topologicalSummary: data.topologicalSummary || ''
+        };
+      }
+    }
+  } catch (err) {
+    console.warn('detectImageLocation request failed:', err);
+  }
+  return null;
 }

@@ -8,11 +8,11 @@ import {
   Clock,
   FileText,
   Bot,
-  SlidersHorizontal,
   X,
+  ChevronRight,
   Radar,
   Sparkles,
-  ChevronRight
+  Layers
 } from 'lucide-react';
 import { ActivePage } from '../types';
 
@@ -21,7 +21,7 @@ interface NavbarProps {
   onSelectPage: (page: ActivePage) => void;
   savedCount: number;
   hasCustomKey: boolean;
-  onOpenCinematic: () => void;
+  onOpenCinematic?: () => void;
   onOpenApiKey: () => void;
   onOpenHistory: () => void;
 }
@@ -66,34 +66,29 @@ export const Navbar: React.FC<NavbarProps> = ({
 
   return (
     <>
-      <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-[#D0E4F8] px-4 py-2.5 shadow-xs">
-        <div className="max-w-6xl mx-auto flex items-center justify-between gap-2">
-          {/* Brand Identity */}
+      <header className="sticky top-0 z-40 bg-[#08101E]/95 backdrop-blur-md border-b border-[#14233D] px-4 py-2.5 shadow-md">
+        <div className="max-w-[1520px] mx-auto flex items-center justify-between gap-3">
+          {/* Brand Identity: BHUदृष्टि */}
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl overflow-hidden border border-[#0288D1]/60 shadow-xs flex-shrink-0 bg-white">
+            <div className="w-8 h-8 rounded-full overflow-hidden border border-[#00B0FF]/70 shadow-[0_0_10px_rgba(0,176,255,0.4)] flex-shrink-0 bg-[#0A1628] flex items-center justify-center">
               <img
                 src="/assets/img_bhu_drishti_icon.jpg"
                 alt="BHUदृष्टि Logo"
                 className="w-full h-full object-cover"
               />
             </div>
-            <div>
-              <div className="flex items-center gap-1.5">
-                <h1 className="text-[17px] font-bold tracking-tight text-[#0A2239] leading-tight">
-                  BHUदृष्टि
-                </h1>
-                <span className="text-[10px] font-semibold text-[#0288D1] bg-[#0288D1]/10 px-1.5 py-0.5 rounded-md font-mono">
-                  PRO
-                </span>
-              </div>
-              <p className="text-[10px] text-[#708FAE] font-medium leading-none mt-0.5">
-                ISRO & Sentinel Remote Sensing AI
-              </p>
+            <div className="flex items-center gap-2">
+              <h1 className="text-[17px] font-black tracking-wide text-white font-sans">
+                BHUदृष्टि
+              </h1>
+              <span className="text-[9px] font-bold text-[#00E5FF] bg-[#00E5FF]/15 border border-[#00E5FF]/40 px-1.5 py-0.5 rounded font-mono">
+                PRO
+              </span>
             </div>
           </div>
 
-          {/* Center Page Tabs (Desktop) */}
-          <nav className="hidden lg:flex items-center gap-1 bg-[#F0F7FF] p-1 rounded-xl border border-[#D0E4F8]">
+          {/* Center Page Tabs */}
+          <nav className="hidden lg:flex items-center gap-1.5 bg-[#0C172A] p-1 rounded-xl border border-[#182C4D]">
             {pages.map((p) => {
               const Icon = p.icon;
               const isActive = activePage === p.id;
@@ -101,10 +96,10 @@ export const Navbar: React.FC<NavbarProps> = ({
                 <button
                   key={p.id}
                   onClick={() => onSelectPage(p.id)}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
+                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer ${
                     isActive
-                      ? 'bg-[#0288D1] text-white shadow-xs'
-                      : 'text-[#43607E] hover:text-[#0A2239] hover:bg-white/60'
+                      ? 'bg-[#0088D1] text-white shadow-[0_0_12px_rgba(0,136,209,0.5)]'
+                      : 'text-slate-300 hover:text-white hover:bg-white/5'
                   }`}
                 >
                   <Icon className="w-3.5 h-3.5" />
@@ -114,59 +109,66 @@ export const Navbar: React.FC<NavbarProps> = ({
             })}
           </nav>
 
-          {/* Right Action Icons including Hammer */}
-          <div className="flex items-center gap-1.5">
-            {/* The User-Requested HAMMER Button for rapid page navigation */}
+          {/* Right Action Icons including 3-Line Menu (replacing Operations Hammer) */}
+          <div className="flex items-center gap-2">
+            {/* The 3-Line Menu Button matching user's screenshot with same functionality */}
             <button
               onClick={() => setIsHammerDrawerOpen(true)}
-              className="px-3 py-1.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-bold text-xs flex items-center gap-1.5 shadow-xs transition-all cursor-pointer hover:scale-105 active:scale-95"
-              title="Mission Operations Hammer: Jump to any page"
+              className="p-2 rounded-xl bg-[#101F38] hover:bg-[#182C4D] border border-[#1C3660] hover:border-[#00E5FF]/50 transition-all cursor-pointer flex items-center justify-center shadow-xs active:scale-95"
+              title="Workstation Launcher Menu"
+              aria-label="Workstation Launcher Menu"
             >
-              <Hammer className="w-4 h-4" />
-              <span className="hidden sm:inline font-mono">Operations Hammer</span>
-            </button>
-
-            {/* Re-launch 3D Cinematic Opening Screen */}
-            <button
-              onClick={onOpenCinematic}
-              data-testid="launch_cinematic_opening_button"
-              className="p-2 rounded-xl text-[#0288D1] hover:bg-[#F0F7FF] transition-colors relative"
-              title="Play 3D Earth Cinematic Loading Screen"
-              aria-label="Cinematic Opening Scan"
-            >
-              <Globe className="w-4.5 h-4.5" />
-            </button>
-
-            {/* API Key Settings */}
-            <button
-              onClick={onOpenApiKey}
-              className={`p-2 rounded-xl transition-colors relative ${
-                hasCustomKey ? 'text-[#2E7D32] hover:bg-[#E8F5E9]' : 'text-[#708FAE] hover:bg-[#F0F7FF]'
-              }`}
-              title="Custom Gemini API Key"
-              aria-label="API Key Settings"
-            >
-              <Key className="w-4.5 h-4.5" />
+              <div className="w-5 h-3.5 flex flex-col justify-between items-center">
+                <span className="w-full h-[2.5px] bg-white rounded-full block" />
+                <span className="w-full h-[2.5px] bg-white rounded-full block" />
+                <span className="w-full h-[2.5px] bg-white rounded-full block" />
+              </div>
             </button>
 
             {/* Saved Missions Drawer */}
             <button
               onClick={onOpenHistory}
-              className="p-2 rounded-xl text-[#0288D1] hover:bg-[#F0F7FF] transition-colors relative"
+              className="p-1.5 rounded-lg text-slate-300 hover:text-[#00E5FF] hover:bg-white/5 transition-colors relative"
               title="Mission History Archive"
               aria-label="Saved Analyses"
             >
-              <Bookmark className="w-4.5 h-4.5" />
+              <Bookmark className="w-4 h-4" />
               {savedCount > 0 && (
-                <span className="absolute top-1 right-1 w-4 h-4 bg-[#E65100] text-white rounded-full text-[9px] font-bold flex items-center justify-center">
+                <span className="absolute top-0.5 right-0.5 w-3.5 h-3.5 bg-[#FF6F00] text-white rounded-full text-[8px] font-bold flex items-center justify-center">
                   {savedCount}
                 </span>
               )}
             </button>
+
+            {/* Replay Cinematic Video Opening */}
+            {onOpenCinematic && (
+              <button
+                onClick={onOpenCinematic}
+                className="p-1.5 rounded-lg text-slate-300 hover:text-[#00E5FF] hover:bg-white/5 transition-colors relative"
+                title="Play BHUदृष्टि Opening Video"
+                aria-label="Play Opening Video"
+              >
+                <Globe className="w-4 h-4" />
+              </button>
+            )}
+
+            {/* API Key Settings */}
+            <button
+              onClick={onOpenApiKey}
+              className={`p-1.5 rounded-lg transition-colors relative ${
+                hasCustomKey
+                  ? 'text-[#00E676] hover:bg-emerald-950/40'
+                  : 'text-slate-300 hover:text-[#00E5FF] hover:bg-white/5'
+              }`}
+              title="Custom Gemini API Key"
+              aria-label="API Key Settings"
+            >
+              <Key className="w-4 h-4" />
+            </button>
           </div>
         </div>
 
-        {/* Mobile Page Switcher Ribbon (Below header on small screens) */}
+        {/* Mobile Page Switcher Ribbon */}
         <div className="lg:hidden flex items-center gap-1 overflow-x-auto pt-2 scrollbar-none">
           {pages.map((p) => {
             const Icon = p.icon;
@@ -177,8 +179,8 @@ export const Navbar: React.FC<NavbarProps> = ({
                 onClick={() => onSelectPage(p.id)}
                 className={`px-2.5 py-1 rounded-lg text-[11px] font-bold flex items-center gap-1 flex-shrink-0 transition-all ${
                   isActive
-                    ? 'bg-[#0288D1] text-white shadow-xs'
-                    : 'bg-[#F0F7FF] text-[#43607E] border border-[#D0E4F8]'
+                    ? 'bg-[#0088D1] text-white shadow-xs'
+                    : 'bg-[#0C172A] text-slate-300 border border-[#182C4D]'
                 }`}
               >
                 <Icon className="w-3 h-3" />
@@ -189,24 +191,28 @@ export const Navbar: React.FC<NavbarProps> = ({
         </div>
       </header>
 
-      {/* OPERATIONS HAMMER MODAL DRAWER */}
+      {/* WORKSTATION LAUNCHER MODAL DRAWER */}
       {isHammerDrawerOpen && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white border-2 border-orange-400 rounded-3xl p-6 max-w-lg w-full shadow-2xl animate-in fade-in zoom-in-95 duration-200">
-            {/* Hammer Header */}
-            <div className="flex items-center justify-between pb-4 border-b border-[#E3F2FD]">
+        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="bg-[#0C172A] border border-[#00E5FF]/40 rounded-3xl p-6 max-w-lg w-full shadow-2xl text-white animate-in fade-in zoom-in-95 duration-200">
+            {/* Drawer Header */}
+            <div className="flex items-center justify-between pb-4 border-b border-[#1C3254]">
               <div className="flex items-center gap-3">
-                <div className="p-3 rounded-2xl bg-gradient-to-tr from-amber-500 to-orange-500 text-white shadow-md">
-                  <Hammer className="w-6 h-6" />
+                <div className="p-3 rounded-2xl bg-[#0088D1] text-white shadow-lg flex items-center justify-center">
+                  <div className="w-5 h-3.5 flex flex-col justify-between items-center">
+                    <span className="w-full h-[2px] bg-white rounded-full block" />
+                    <span className="w-full h-[2px] bg-white rounded-full block" />
+                    <span className="w-full h-[2px] bg-white rounded-full block" />
+                  </div>
                 </div>
                 <div>
-                  <h3 className="font-bold text-base text-[#0A2239] flex items-center gap-2">
-                    <span>Mission Operations Hammer</span>
-                    <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-orange-100 text-orange-800">
+                  <h3 className="font-bold text-base text-white flex items-center gap-2">
+                    <span>BHUदृष्टि Workstations</span>
+                    <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[#00E5FF]/15 text-[#00E5FF] border border-[#00E5FF]/40">
                       RAPID LAUNCHER
                     </span>
                   </h3>
-                  <p className="text-xs text-[#708FAE]">
+                  <p className="text-xs text-slate-400">
                     Switch between all 4 specialized geospatial intelligence workstations
                   </p>
                 </div>
@@ -214,7 +220,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 
               <button
                 onClick={() => setIsHammerDrawerOpen(false)}
-                className="p-2 rounded-xl text-[#708FAE] hover:bg-[#F0F7FF] transition-colors"
+                className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-white/5 transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -234,57 +240,63 @@ export const Navbar: React.FC<NavbarProps> = ({
                     }}
                     className={`w-full p-3.5 rounded-2xl border text-left flex items-center justify-between gap-3 transition-all cursor-pointer ${
                       isSelected
-                        ? 'bg-[#E0F2FE] border-[#0288D1] shadow-xs'
-                        : 'bg-[#F8FAFC] border-[#E2E8F0] hover:bg-[#F0F7FF] hover:border-[#D0E4F8]'
+                        ? 'bg-[#0088D1]/20 border-[#00B0FF] shadow-[0_0_15px_rgba(0,176,255,0.2)]'
+                        : 'bg-[#101F38] border-[#1C3254] hover:bg-[#162B4D] hover:border-[#284978]'
                     }`}
                   >
                     <div className="flex items-center gap-3">
                       <div
                         className={`p-2.5 rounded-xl ${
-                          isSelected ? 'bg-[#0288D1] text-white' : 'bg-white text-[#0288D1] shadow-2xs'
+                          isSelected ? 'bg-[#0088D1] text-white' : 'bg-[#0C172A] text-[#00E5FF]'
                         }`}
                       >
                         <Icon className="w-5 h-5" />
                       </div>
                       <div>
-                        <div className="font-bold text-xs text-[#0A2239] flex items-center gap-1.5">
+                        <div className="font-bold text-xs text-white flex items-center gap-1.5">
                           <span>{p.label}</span>
                           {isSelected && (
-                            <span className="text-[9px] font-mono font-bold text-[#0288D1] bg-[#0288D1]/10 px-1.5 py-0.2 rounded-sm">
+                            <span className="text-[9px] font-mono font-bold text-[#00E5FF] bg-[#00E5FF]/10 px-1.5 py-0.2 rounded-sm">
                               CURRENT
                             </span>
                           )}
                         </div>
-                        <div className="text-[11px] text-[#708FAE] mt-0.5 line-clamp-1">
+                        <div className="text-[11px] text-slate-400 mt-0.5 line-clamp-1">
                           {p.desc}
                         </div>
                       </div>
                     </div>
 
-                    <ChevronRight className="w-4 h-4 text-[#708FAE]" />
+                    <ChevronRight className="w-4 h-4 text-slate-400" />
                   </button>
                 );
               })}
             </div>
 
             {/* Quick Actions Footer */}
-            <div className="pt-3 border-t border-[#E3F2FD] flex items-center justify-between text-xs">
-              <button
-                onClick={() => {
-                  setIsHammerDrawerOpen(false);
-                  onOpenCinematic();
-                }}
-                className="text-[#0288D1] font-bold flex items-center gap-1 hover:underline"
-              >
-                <Globe className="w-3.5 h-3.5" />
-                <span>Re-play 3D Earth Loading Screen</span>
-              </button>
+            <div className="pt-3 border-t border-[#1C3254] flex items-center justify-between text-xs">
+              {onOpenCinematic ? (
+                <button
+                  onClick={() => {
+                    setIsHammerDrawerOpen(false);
+                    onOpenCinematic();
+                  }}
+                  className="text-[#00E5FF] font-bold flex items-center gap-1.5 hover:underline cursor-pointer"
+                >
+                  <Globe className="w-3.5 h-3.5" />
+                  <span>Replay Opening Video</span>
+                </button>
+              ) : (
+                <span className="text-slate-400 font-mono text-[11px]">
+                  BHUदृष्टि Geospatial Systems Active
+                </span>
+              )}
 
               <button
                 onClick={() => setIsHammerDrawerOpen(false)}
-                className="px-4 py-2 bg-[#0A2239] hover:bg-[#1E3A5F] text-white rounded-xl font-bold cursor-pointer transition-colors"
+                className="px-4 py-2 bg-[#101F38] hover:bg-[#162B4D] text-white rounded-xl font-bold cursor-pointer transition-colors"
               >
-                Close Hammer
+                Close
               </button>
             </div>
           </div>

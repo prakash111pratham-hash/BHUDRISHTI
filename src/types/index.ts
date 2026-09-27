@@ -38,6 +38,20 @@ export const SPECTRAL_MODES: Record<SpectralBandModeKey, SpectralBandMode> = {
   }
 };
 
+export interface DetectedLocationData {
+  locationName: string;
+  coordinates: string;
+  latitude: number;
+  longitude: number;
+  googleMapsUrl: string;
+  embedUrl: string;
+  satelliteEmbedUrl?: string;
+  vicinityLandmarks: string[];
+  bodiesOfWater: string[];
+  transitArteries: string[];
+  topologicalSummary: string;
+}
+
 export interface SatelliteScene {
   id: string;
   title: string;
@@ -51,6 +65,9 @@ export interface SatelliteScene {
   domainCategory: string;
   geographicLocation: string;
   googleMapsUrl: string;
+  embedMapsUrl?: string;
+  satelliteEmbedUrl?: string;
+  detectedLocation?: DetectedLocationData;
   baseNdvi: number;
   baseNdwi: number;
   baseNdbi: number;
@@ -59,26 +76,78 @@ export interface SatelliteScene {
 
 export const PRESET_SCENES: SatelliteScene[] = [
   {
-    id: 'urban_port',
-    title: 'Metropolis Port & Estuary',
-    subtitle: 'Coastal urban development, shipping harbor & marine siltation',
+    id: 'mumbai_port',
+    title: 'Mumbai Port & Estuary',
+    subtitle: 'Coastal container shipping logistics, marine siltation & urban bay',
     imageSrc: '/assets/sat_urban_port.jpg',
-    coordinates: '37°46\'30"N, 122°18\'22"W',
-    gsdResolution: '0.3 m/px',
+    coordinates: '18°57\'00"N, 72°51\'18"E',
+    gsdResolution: '0.33 m/px',
     satellitePlatform: 'WorldView-3 / Sentinel-2 MSI',
     defaultQuerySuggestions: [
       'Summarize urban sprawl and port logistics in plain words',
       'Detect water sediment plumes and vessel wakes in the harbor',
       'Estimate ratio of industrial vs residential density',
-      'Assess coastal flooding risk and shoreline erosion'
+      'Complex: spectral query'
     ],
-    domainCategory: 'Urban & Coastal',
-    geographicLocation: 'Port of Oakland & San Francisco Bay, California, USA',
-    googleMapsUrl: 'https://www.google.com/maps/search/?api=1&query=37.7750,-122.3061',
+    domainCategory: 'Urban & Coastal Marine',
+    geographicLocation: 'Mumbai Port & Coastal Estuary, Maharashtra, India',
+    googleMapsUrl: 'https://www.google.com/maps/search/?api=1&query=18.9500,72.8550',
+    embedMapsUrl: 'https://maps.google.com/maps?q=18.9500,72.8550&hl=en&z=14&output=embed',
+    satelliteEmbedUrl: 'https://maps.google.com/maps?q=18.9500,72.8550&t=k&hl=en&z=14&output=embed',
+    detectedLocation: {
+      locationName: 'Mumbai Port Trust & Harbor Basin, Mumbai, Maharashtra 400001, India',
+      coordinates: '18°57\'00"N, 72°51\'18"E',
+      latitude: 18.9500,
+      longitude: 72.8550,
+      googleMapsUrl: 'https://www.google.com/maps/search/?api=1&query=18.9500,72.8550',
+      embedUrl: 'https://maps.google.com/maps?q=18.9500,72.8550&hl=en&z=14&output=embed',
+      satelliteEmbedUrl: 'https://maps.google.com/maps?q=18.9500,72.8550&t=k&hl=en&z=14&output=embed',
+      vicinityLandmarks: ['Mumbai Port Trust Outer Basin', 'Indira Dock', 'Gateway of India Approach', 'Elephanta Channel'],
+      bodiesOfWater: ['Thane Creek', 'Arabian Sea Harbor', 'Mumbai Harbor Channel'],
+      transitArteries: ['Eastern Freeway', 'P D\'Mello Road', 'Harbour Railway Line'],
+      topologicalSummary: 'Deepwater container terminal and breakwater logistics harbor with estuarine tidal flats and urban maritime waterfront.'
+    },
     baseNdvi: 0.18,
     baseNdwi: 0.62,
     baseNdbi: 0.74,
     baseSurfaceTemp: 21.8
+  },
+  {
+    id: 'powai_urban',
+    title: 'Mumbai Powai & Urban Canopy',
+    subtitle: 'Elevated urban canopy, residential high-rises & Powai lake watershed',
+    imageSrc: '/assets/mumbai_aerial_landscape.jpg',
+    coordinates: '19°07\'38"N, 72°54\'28"E',
+    gsdResolution: '0.30 m/px',
+    satellitePlatform: 'WorldView-3 / Sentinel-2 MSI',
+    defaultQuerySuggestions: [
+      'Summarize residential buildings and tree canopy in simple words',
+      'Detect water body boundaries of Powai lake and hills in the background',
+      'Estimate ratio of dense green forest canopy vs built structures',
+      'Assess atmospheric haze and urban vegetation distribution'
+    ],
+    domainCategory: 'Urban & Environmental Canopy',
+    geographicLocation: 'Powai, Sanjay Gandhi National Park Ridge, Mumbai, Maharashtra, India',
+    googleMapsUrl: 'https://www.google.com/maps/search/?api=1&query=19.1272,72.9078',
+    embedMapsUrl: 'https://maps.google.com/maps?q=19.1272,72.9078&hl=en&z=14&output=embed',
+    satelliteEmbedUrl: 'https://maps.google.com/maps?q=19.1272,72.9078&t=k&hl=en&z=14&output=embed',
+    detectedLocation: {
+      locationName: 'Powai Lake & Hiranandani Gardens, Powai, Mumbai, Maharashtra 400076, India',
+      coordinates: '19°07\'38"N, 72°54\'28"E',
+      latitude: 19.1272,
+      longitude: 72.9078,
+      googleMapsUrl: 'https://www.google.com/maps/search/?api=1&query=19.1272,72.9078',
+      embedUrl: 'https://maps.google.com/maps?q=19.1272,72.9078&hl=en&z=14&output=embed',
+      satelliteEmbedUrl: 'https://maps.google.com/maps?q=19.1272,72.9078&t=k&hl=en&z=14&output=embed',
+      vicinityLandmarks: ['Powai Lake', 'IIT Bombay Main Campus', 'Hiranandani Gardens Complex', 'Sanjay Gandhi National Park Ridge'],
+      bodiesOfWater: ['Powai Lake', 'Vihar Lake Catchment', 'Mithi River Outflow'],
+      transitArteries: ['Jogeshwari–Vikhroli Link Road (JVLR)', 'Adi Shankaracharya Marg'],
+      topologicalSummary: 'Subtropical freshwater lake basin framed by dense urban high-rise towers and Sanjay Gandhi National Park basalt ridges.'
+    },
+    baseNdvi: 0.48,
+    baseNdwi: 0.52,
+    baseNdbi: 0.36,
+    baseSurfaceTemp: 23.4
   },
   {
     id: 'agriculture_pivot',
@@ -97,6 +166,21 @@ export const PRESET_SCENES: SatelliteScene[] = [
     domainCategory: 'Agriculture & NDVI',
     geographicLocation: 'High Plains Ogallala Aquifer, Texas-Oklahoma, USA',
     googleMapsUrl: 'https://www.google.com/maps/search/?api=1&query=36.3541,-100.7522',
+    embedMapsUrl: 'https://maps.google.com/maps?q=36.3541,-100.7522&hl=en&z=14&output=embed',
+    satelliteEmbedUrl: 'https://maps.google.com/maps?q=36.3541,-100.7522&t=k&hl=en&z=14&output=embed',
+    detectedLocation: {
+      locationName: 'Ogallala Aquifer Center-Pivot Farmlands, Perryton, Texas 79070, USA',
+      coordinates: '36°21\'15"N, 100°45\'08"W',
+      latitude: 36.3541,
+      longitude: -100.7522,
+      googleMapsUrl: 'https://www.google.com/maps/search/?api=1&query=36.3541,-100.7522',
+      embedUrl: 'https://maps.google.com/maps?q=36.3541,-100.7522&hl=en&z=14&output=embed',
+      satelliteEmbedUrl: 'https://maps.google.com/maps?q=36.3541,-100.7522&t=k&hl=en&z=14&output=embed',
+      vicinityLandmarks: ['Perryton High Plains Elevators', 'Canadian River Basin Plains', 'Ogallala Aquifer Wellheads'],
+      bodiesOfWater: ['Wolf Creek Watershed', 'Playa Lake Depressions'],
+      transitArteries: ['US Highway 83', 'Texas State Highway 15', 'County Farm Roads'],
+      topologicalSummary: 'Geometric circular center-pivot irrigated crop fields forming high-contrast circular agronomic mosaics on flat high plains.'
+    },
     baseNdvi: 0.81,
     baseNdwi: 0.14,
     baseNdbi: -0.22,
@@ -119,6 +203,21 @@ export const PRESET_SCENES: SatelliteScene[] = [
     domainCategory: 'Forestry & Climate',
     geographicLocation: 'Amazon Basin River Confluence, Amazonas, Brazil',
     googleMapsUrl: 'https://www.google.com/maps/search/?api=1&query=-3.2122,-60.0386',
+    embedMapsUrl: 'https://maps.google.com/maps?q=-3.2122,-60.0386&hl=en&z=14&output=embed',
+    satelliteEmbedUrl: 'https://maps.google.com/maps?q=-3.2122,-60.0386&t=k&hl=en&z=14&output=embed',
+    detectedLocation: {
+      locationName: 'Rio Negro & Amazon River Basin, Manaus, Amazonas 69000-000, Brazil',
+      coordinates: '03°12\'44"S, 60°02\'19"W',
+      latitude: -3.2122,
+      longitude: -60.0386,
+      googleMapsUrl: 'https://www.google.com/maps/search/?api=1&query=-3.2122,-60.0386',
+      embedUrl: 'https://maps.google.com/maps?q=-3.2122,-60.0386&hl=en&z=14&output=embed',
+      satelliteEmbedUrl: 'https://maps.google.com/maps?q=-3.2122,-60.0386&t=k&hl=en&z=14&output=embed',
+      vicinityLandmarks: ['Encontro das Águas Confluence', 'Anavilhanas Archipelago Margin', 'Adolpho Ducke Forest Reserve'],
+      bodiesOfWater: ['Rio Negro', 'Amazon River (Rio Solimões)', 'Tarumã-Açu River'],
+      transitArteries: ['AM-070 Highway', 'Manaus Floating Port Terminal', 'Rio Negro Bridge'],
+      topologicalSummary: 'Dense primary tropical rainforest canopy intersected by high-sediment river corridors and dendritic drainage tributaries.'
+    },
     baseNdvi: 0.89,
     baseNdwi: 0.48,
     baseNdbi: -0.45,
@@ -153,6 +252,8 @@ export interface AnalysisResult {
   geographicRegion: string;
   googleMapsLocationUri: string | null;
   googleMapsGroundingSummary: string | null;
+  embedMapsUrl?: string;
+  detectedLocation?: DetectedLocationData;
 }
 
 export interface ChatMessage {
