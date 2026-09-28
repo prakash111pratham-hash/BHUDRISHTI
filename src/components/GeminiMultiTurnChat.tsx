@@ -132,18 +132,52 @@ export const GeminiMultiTurnChat: React.FC<GeminiMultiTurnChatProps> = ({
   };
 
   return (
-    <div className="bg-[#0C172A] border border-[#182C4D] rounded-2xl shadow-xl flex flex-col h-[520px] text-white overflow-hidden">
+    <div
+      className={`rounded-2xl shadow-xl flex flex-col h-[520px] text-white overflow-hidden transition-all duration-200 border ${
+        taskComplexity === 'fast'
+          ? 'bg-[#0E1524] border-amber-400/40 shadow-[0_0_20px_rgba(251,191,36,0.15)]'
+          : taskComplexity === 'complex'
+          ? 'bg-[#120D24] border-purple-400/60 shadow-[0_0_25px_rgba(168,85,247,0.25)]'
+          : 'bg-[#0C172A] border-[#182C4D]'
+      }`}
+    >
       {/* 1. Header with Role & System Instruction Notice */}
-      <div className="p-3.5 bg-[#08101E] border-b border-[#182C4D] flex items-center justify-between gap-2">
-        <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-[#0088D1] to-[#00E5FF] flex items-center justify-center text-white shadow-[0_0_10px_rgba(0,229,255,0.4)]">
-            <Bot className="w-4 h-4" />
+      <div className="p-3.5 bg-[#08101E] border-b border-[#182C4D] flex items-center justify-between gap-2 flex-wrap">
+        <div className="flex items-center gap-2.5 min-w-0">
+          <div
+            className={`w-8 h-8 rounded-xl flex items-center justify-center text-white shadow-md flex-shrink-0 ${
+              taskComplexity === 'fast'
+                ? 'bg-amber-500 text-black font-bold'
+                : taskComplexity === 'complex'
+                ? 'bg-purple-600'
+                : 'bg-gradient-to-tr from-[#0088D1] to-[#00E5FF]'
+            }`}
+          >
+            {taskComplexity === 'fast' ? (
+              <Zap className="w-4 h-4 text-black" />
+            ) : taskComplexity === 'complex' ? (
+              <Cpu className="w-4 h-4 text-white" />
+            ) : (
+              <Bot className="w-4 h-4 text-white" />
+            )}
           </div>
           <div>
             <div className="flex items-center gap-1.5">
               <h3 className="font-bold text-xs text-white">BHUदृष्टि Remote Sensing Chatbot</h3>
-              <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-[#00E676]/15 text-[#00E676] border border-[#00E676]/30">
-                ACTIVE MULTI-TURN
+              <span
+                className={`text-[9px] font-mono px-1.5 py-0.5 rounded font-bold border ${
+                  taskComplexity === 'fast'
+                    ? 'bg-amber-500/20 text-amber-300 border-amber-500/40'
+                    : taskComplexity === 'complex'
+                    ? 'bg-purple-600/25 text-purple-300 border-purple-500/40'
+                    : 'bg-[#00E676]/15 text-[#00E676] border-[#00E676]/30'
+                }`}
+              >
+                {taskComplexity === 'fast'
+                  ? '⚡ FAST SCAN'
+                  : taskComplexity === 'complex'
+                  ? '🧠 COMPLEX STEM'
+                  : '🌐 GENERAL BOA'}
               </span>
             </div>
             <div className="text-[10px] text-slate-400 font-medium">
@@ -156,10 +190,10 @@ export const GeminiMultiTurnChat: React.FC<GeminiMultiTurnChatProps> = ({
         <div className="flex items-center gap-1 bg-[#101F38] p-1 rounded-xl border border-[#1C3660] text-[10px]">
           <button
             onClick={() => setTaskComplexity('fast')}
-            title="Fast Scan (gemini-3.1-flash-lite)"
+            title="Fast Scan (Sub-second / gemini-flash-lite)"
             className={`px-2 py-1 rounded-lg font-bold transition-all flex items-center gap-1 cursor-pointer ${
               taskComplexity === 'fast'
-                ? 'bg-[#0088D1] text-white shadow-xs'
+                ? 'bg-amber-500 text-black shadow-xs font-black'
                 : 'text-slate-400 hover:text-white'
             }`}
           >
@@ -168,7 +202,7 @@ export const GeminiMultiTurnChat: React.FC<GeminiMultiTurnChatProps> = ({
           </button>
           <button
             onClick={() => setTaskComplexity('general')}
-            title="General Analysis (gemini-3.5-flash)"
+            title="General Analysis (Balanced / gemini-2.5-flash)"
             className={`px-2 py-1 rounded-lg font-bold transition-all flex items-center gap-1 cursor-pointer ${
               taskComplexity === 'general'
                 ? 'bg-[#0088D1] text-white shadow-xs'
@@ -180,10 +214,10 @@ export const GeminiMultiTurnChat: React.FC<GeminiMultiTurnChatProps> = ({
           </button>
           <button
             onClick={() => setTaskComplexity('complex')}
-            title="Complex STEM Reasoning (gemini-3.1-pro-preview)"
+            title="Complex STEM Reasoning (Deep Math / gemini-2.5-pro)"
             className={`px-2 py-1 rounded-lg font-bold transition-all flex items-center gap-1 cursor-pointer ${
               taskComplexity === 'complex'
-                ? 'bg-purple-600 text-white shadow-xs'
+                ? 'bg-purple-600 text-white shadow-xs font-black'
                 : 'text-slate-400 hover:text-white'
             }`}
           >
@@ -191,6 +225,26 @@ export const GeminiMultiTurnChat: React.FC<GeminiMultiTurnChatProps> = ({
             <span>Complex</span>
           </button>
         </div>
+      </div>
+
+      {/* Mode Status Banner */}
+      <div
+        className={`px-3.5 py-1.5 border-b text-[10px] font-mono flex items-center justify-between gap-2 ${
+          taskComplexity === 'fast'
+            ? 'bg-amber-950/30 border-amber-400/30 text-amber-200'
+            : taskComplexity === 'complex'
+            ? 'bg-purple-950/30 border-purple-400/30 text-purple-200'
+            : 'bg-[#0A1424] border-[#14233D] text-[#00E5FF]'
+        }`}
+      >
+        <span className="truncate">
+          {taskComplexity === 'fast' && '⚡ Fast Mode: High-speed screening (~380ms) for quick counts & object presence.'}
+          {taskComplexity === 'general' && '🌐 General Mode: Balanced multi-spectral Level-2A analysis with ground truth.'}
+          {taskComplexity === 'complex' && '🧠 Complex Mode: Deep STEM reasoning with band matrix physics & calculus derivations.'}
+        </span>
+        <span className="text-[9px] px-1.5 py-0.5 rounded bg-black/40 border border-white/20 flex-shrink-0">
+          {taskComplexity === 'fast' ? 'gemini-flash-lite' : taskComplexity === 'complex' ? 'gemini-2.5-pro' : 'gemini-2.5-flash'}
+        </span>
       </div>
 
       {/* 2. Google Maps Grounding Ribbon */}

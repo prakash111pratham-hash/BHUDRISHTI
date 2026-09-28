@@ -26,17 +26,17 @@ export const SavedAnalysesSheet: React.FC<SavedAnalysesSheetProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex justify-end bg-black/40 backdrop-blur-xs transition-opacity">
-      <div className="w-full max-w-md h-full bg-white shadow-2xl flex flex-col border-l border-[#D0E4F8] animate-in slide-in-from-right duration-200">
+    <div className="fixed inset-0 z-50 flex justify-end bg-black/70 backdrop-blur-sm transition-opacity">
+      <div className="w-full max-w-md h-full bg-[#0B1528] shadow-2xl flex flex-col border-l border-[#182C4D] animate-in slide-in-from-right duration-200 text-white">
         {/* Header */}
-        <div className="p-4 border-b border-[#D0E4F8] flex items-center justify-between">
+        <div className="p-4 border-b border-[#182C4D] flex items-center justify-between bg-[#08101E]">
           <div className="flex items-center gap-2">
-            <Bookmark className="w-5 h-5 text-[#0288D1]" />
+            <Bookmark className="w-5 h-5 text-[#00E5FF]" />
             <div>
-              <h3 className="text-[15px] font-bold text-[#0A2239]">
+              <h3 className="text-[15px] font-bold text-white">
                 Saved Remote Sensing Records
               </h3>
-              <p className="text-[11px] text-[#708FAE]">
+              <p className="text-[11px] text-slate-400 font-mono">
                 {records.length} persisted reports in local database
               </p>
             </div>
@@ -47,7 +47,7 @@ export const SavedAnalysesSheet: React.FC<SavedAnalysesSheetProps> = ({
               <button
                 onClick={onClearAll}
                 data-testid="clear_all_records_button"
-                className="p-2 text-[#D32F2F] hover:bg-[#D32F2F]/10 rounded-lg transition-colors"
+                className="p-2 text-red-400 hover:bg-red-500/10 rounded-lg transition-colors cursor-pointer"
                 title="Clear All Records"
                 aria-label="Clear all records"
               >
@@ -57,7 +57,7 @@ export const SavedAnalysesSheet: React.FC<SavedAnalysesSheetProps> = ({
 
             <button
               onClick={onDismiss}
-              className="p-2 text-[#708FAE] hover:bg-[#F0F7FF] rounded-lg transition-colors"
+              className="p-2 text-slate-400 hover:text-white hover:bg-[#122340] rounded-lg transition-colors cursor-pointer"
               title="Close"
               aria-label="Close"
             >
@@ -70,11 +70,11 @@ export const SavedAnalysesSheet: React.FC<SavedAnalysesSheetProps> = ({
         <div className="flex-1 overflow-y-auto p-4 space-y-3">
           {records.length === 0 ? (
             <div className="h-full flex flex-col items-center justify-center text-center p-6">
-              <Bookmark className="w-12 h-12 text-[#D0E4F8] mb-3" />
-              <h4 className="text-[14px] font-semibold text-[#43607E] mb-1">
+              <Bookmark className="w-12 h-12 text-slate-600 mb-3" />
+              <h4 className="text-[14px] font-semibold text-slate-300 mb-1">
                 No saved analyses yet
               </h4>
-              <p className="text-[12px] text-[#708FAE] max-w-xs">
+              <p className="text-[12px] text-slate-500 max-w-xs">
                 Run an AI query on any satellite scene and tap the bookmark icon to save reports here.
               </p>
             </div>
@@ -83,15 +83,15 @@ export const SavedAnalysesSheet: React.FC<SavedAnalysesSheetProps> = ({
               <div
                 key={record.id}
                 data-testid={`saved_record_${record.id}`}
-                className="bg-[#F0F7FF] border border-[#D0E4F8] rounded-xl p-3.5 shadow-2xs hover:border-[#0288D1]/50 transition-colors"
+                className="bg-[#08101E] border border-[#182C4D] rounded-xl p-3.5 shadow-md hover:border-[#00B0FF]/50 transition-colors"
               >
                 <div className="flex items-center justify-between mb-1">
-                  <h4 className="text-[13px] font-bold text-[#0288D1] truncate">
+                  <h4 className="text-[13px] font-bold text-[#00E5FF] truncate">
                     {record.sceneTitle}
                   </h4>
                   <button
                     onClick={() => onDeleteRecord(record.id)}
-                    className="text-[#708FAE] hover:text-[#D32F2F] p-1 rounded-sm transition-colors"
+                    className="text-slate-400 hover:text-red-400 p-1 rounded-sm transition-colors cursor-pointer"
                     title="Delete Record"
                     aria-label="Delete record"
                   >
@@ -99,20 +99,20 @@ export const SavedAnalysesSheet: React.FC<SavedAnalysesSheetProps> = ({
                   </button>
                 </div>
 
-                <div className="flex items-center gap-1.5 text-[10px] text-[#708FAE] font-mono mb-2">
-                  <Calendar className="w-3 h-3" />
+                <div className="flex items-center gap-1.5 text-[10px] text-slate-400 font-mono mb-2">
+                  <Calendar className="w-3 h-3 text-[#00B0FF]" />
                   <span>{formatDate(record.timestamp)}</span>
                 </div>
 
-                <div className="text-[11px] font-medium text-[#E65100] mb-1">
+                <div className="text-[11px] font-medium text-[#FF9100] mb-1 font-mono">
                   Query: "{record.queryPrompt}"
                 </div>
 
-                <p className="text-[12px] text-[#0A2239] line-clamp-3 leading-relaxed mb-2">
+                <p className="text-[12px] text-slate-300 line-clamp-3 leading-relaxed mb-2">
                   {record.plainSummary}
                 </p>
 
-                <div className="flex items-center gap-1 text-[10px] font-medium text-[#2E7D32]">
+                <div className="flex items-center gap-1 text-[10px] font-medium text-[#00E676] font-mono">
                   <MapPin className="w-3 h-3 flex-shrink-0" />
                   <span className="truncate">Band: {record.spectralBand} • {record.coordinates}</span>
                 </div>

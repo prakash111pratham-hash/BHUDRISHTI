@@ -72,8 +72,8 @@ export const Navbar: React.FC<NavbarProps> = ({
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-full overflow-hidden border border-[#00B0FF]/70 shadow-[0_0_10px_rgba(0,176,255,0.4)] flex-shrink-0 bg-[#0A1628] flex items-center justify-center">
               <img
-                src="/assets/img_bhu_drishti_icon.jpg"
-                alt="BHUदृष्टि Logo"
+                src="/assets/img_india_sat_scan.jpg"
+                alt="BHUदृष्टि India Satellite Logo"
                 className="w-full h-full object-cover"
               />
             </div>

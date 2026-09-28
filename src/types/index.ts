@@ -77,49 +77,49 @@ export interface SatelliteScene {
 export const PRESET_SCENES: SatelliteScene[] = [
   {
     id: 'mumbai_port',
-    title: 'Mumbai Port & Estuary',
-    subtitle: 'Coastal container shipping logistics, marine siltation & urban bay',
+    title: 'Mumbai JNPT Port & Container Basin',
+    subtitle: 'Nadir top-down orthophoto: Container docks, gantry cranes & marine fairway',
     imageSrc: '/assets/sat_urban_port.jpg',
-    coordinates: '18°57\'00"N, 72°51\'18"E',
+    coordinates: '18°56\'54"N, 72°56\'58"E',
     gsdResolution: '0.33 m/px',
-    satellitePlatform: 'WorldView-3 / Sentinel-2 MSI',
+    satellitePlatform: 'Copernicus Sentinel-2 / High-Res Orthophoto',
     defaultQuerySuggestions: [
-      'Summarize urban sprawl and port logistics in plain words',
-      'Detect water sediment plumes and vessel wakes in the harbor',
-      'Estimate ratio of industrial vs residential density',
-      'Complex: spectral query'
+      'Summarize container berths, vessel docks, and port logistics in plain words',
+      'Detect water sediment plumes and vessel wakes in the harbor fairway',
+      'Estimate ratio of paved industrial container storage vs water basin',
+      'Assess ship berthing capacity and gantry crane operations'
     ],
     domainCategory: 'Urban & Coastal Marine',
-    geographicLocation: 'Mumbai Port & Coastal Estuary, Maharashtra, India',
-    googleMapsUrl: 'https://www.google.com/maps/search/?api=1&query=18.9500,72.8550',
-    embedMapsUrl: 'https://maps.google.com/maps?q=18.9500,72.8550&hl=en&z=14&output=embed',
-    satelliteEmbedUrl: 'https://maps.google.com/maps?q=18.9500,72.8550&t=k&hl=en&z=14&output=embed',
+    geographicLocation: 'Jawaharlal Nehru Port (JNPT), Mumbai Harbour, Maharashtra, India',
+    googleMapsUrl: 'https://www.google.com/maps/search/?api=1&query=18.9490,72.9490',
+    embedMapsUrl: 'https://maps.google.com/maps?q=18.9490,72.9490&hl=en&z=14&output=embed',
+    satelliteEmbedUrl: 'https://maps.google.com/maps?q=18.9490,72.9490&t=k&hl=en&z=14&output=embed',
     detectedLocation: {
-      locationName: 'Mumbai Port Trust & Harbor Basin, Mumbai, Maharashtra 400001, India',
-      coordinates: '18°57\'00"N, 72°51\'18"E',
-      latitude: 18.9500,
-      longitude: 72.8550,
-      googleMapsUrl: 'https://www.google.com/maps/search/?api=1&query=18.9500,72.8550',
-      embedUrl: 'https://maps.google.com/maps?q=18.9500,72.8550&hl=en&z=14&output=embed',
-      satelliteEmbedUrl: 'https://maps.google.com/maps?q=18.9500,72.8550&t=k&hl=en&z=14&output=embed',
-      vicinityLandmarks: ['Mumbai Port Trust Outer Basin', 'Indira Dock', 'Gateway of India Approach', 'Elephanta Channel'],
-      bodiesOfWater: ['Thane Creek', 'Arabian Sea Harbor', 'Mumbai Harbor Channel'],
-      transitArteries: ['Eastern Freeway', 'P D\'Mello Road', 'Harbour Railway Line'],
-      topologicalSummary: 'Deepwater container terminal and breakwater logistics harbor with estuarine tidal flats and urban maritime waterfront.'
+      locationName: 'Jawaharlal Nehru Port Trust (JNPT) & Container Harbor, Navi Mumbai, Maharashtra 400707, India',
+      coordinates: '18°56\'54"N, 72°56\'58"E',
+      latitude: 18.9490,
+      longitude: 72.9490,
+      googleMapsUrl: 'https://www.google.com/maps/search/?api=1&query=18.9490,72.9490',
+      embedUrl: 'https://maps.google.com/maps?q=18.9490,72.9490&hl=en&z=14&output=embed',
+      satelliteEmbedUrl: 'https://maps.google.com/maps?q=18.9490,72.9490&t=k&hl=en&z=14&output=embed',
+      vicinityLandmarks: ['JNPT Main Container Terminal Berths', 'Nhava Sheva Rail Freight Corridor', 'Elephanta Navigation Channel', 'Mumbai Port Trust Outer Roads'],
+      bodiesOfWater: ['Thane Creek / Elephanta Channel', 'Arabian Sea Harbor', 'Nhava Creek Basin'],
+      transitArteries: ['Port Access Freeway', 'Dedicated Freight Corridor (DFC)', 'JNPT Expressway'],
+      topologicalSummary: 'Strict 90° nadir satellite orthophoto of India’s premier container port, showing docked cargo vessels, container yards, and tidal estuarine waters.'
     },
-    baseNdvi: 0.18,
-    baseNdwi: 0.62,
-    baseNdbi: 0.74,
-    baseSurfaceTemp: 21.8
+    baseNdvi: 0.14,
+    baseNdwi: 0.68,
+    baseNdbi: 0.78,
+    baseSurfaceTemp: 22.4
   },
   {
     id: 'powai_urban',
     title: 'Mumbai Powai & Urban Canopy',
-    subtitle: 'Elevated urban canopy, residential high-rises & Powai lake watershed',
+    subtitle: 'Nadir orthophoto: Powai Lake freshwater basin, IIT Bombay campus & green ridge',
     imageSrc: '/assets/mumbai_aerial_landscape.jpg',
     coordinates: '19°07\'38"N, 72°54\'28"E',
     gsdResolution: '0.30 m/px',
-    satellitePlatform: 'WorldView-3 / Sentinel-2 MSI',
+    satellitePlatform: 'Copernicus Sentinel-2 / Cartosat-2E',
     defaultQuerySuggestions: [
       'Summarize residential buildings and tree canopy in simple words',
       'Detect water body boundaries of Powai lake and hills in the background',
@@ -127,22 +127,22 @@ export const PRESET_SCENES: SatelliteScene[] = [
       'Assess atmospheric haze and urban vegetation distribution'
     ],
     domainCategory: 'Urban & Environmental Canopy',
-    geographicLocation: 'Powai, Sanjay Gandhi National Park Ridge, Mumbai, Maharashtra, India',
+    geographicLocation: 'Powai Lake & IIT Bombay, Mumbai, Maharashtra 400076, India',
     googleMapsUrl: 'https://www.google.com/maps/search/?api=1&query=19.1272,72.9078',
-    embedMapsUrl: 'https://maps.google.com/maps?q=19.1272,72.9078&hl=en&z=14&output=embed',
-    satelliteEmbedUrl: 'https://maps.google.com/maps?q=19.1272,72.9078&t=k&hl=en&z=14&output=embed',
+    embedMapsUrl: 'https://maps.google.com/maps?q=19.1272,72.9078&hl=en&z=15&output=embed',
+    satelliteEmbedUrl: 'https://maps.google.com/maps?q=19.1272,72.9078&t=k&hl=en&z=15&output=embed',
     detectedLocation: {
       locationName: 'Powai Lake & Hiranandani Gardens, Powai, Mumbai, Maharashtra 400076, India',
       coordinates: '19°07\'38"N, 72°54\'28"E',
       latitude: 19.1272,
       longitude: 72.9078,
       googleMapsUrl: 'https://www.google.com/maps/search/?api=1&query=19.1272,72.9078',
-      embedUrl: 'https://maps.google.com/maps?q=19.1272,72.9078&hl=en&z=14&output=embed',
-      satelliteEmbedUrl: 'https://maps.google.com/maps?q=19.1272,72.9078&t=k&hl=en&z=14&output=embed',
-      vicinityLandmarks: ['Powai Lake', 'IIT Bombay Main Campus', 'Hiranandani Gardens Complex', 'Sanjay Gandhi National Park Ridge'],
-      bodiesOfWater: ['Powai Lake', 'Vihar Lake Catchment', 'Mithi River Outflow'],
-      transitArteries: ['Jogeshwari–Vikhroli Link Road (JVLR)', 'Adi Shankaracharya Marg'],
-      topologicalSummary: 'Subtropical freshwater lake basin framed by dense urban high-rise towers and Sanjay Gandhi National Park basalt ridges.'
+      embedUrl: 'https://maps.google.com/maps?q=19.1272,72.9078&hl=en&z=15&output=embed',
+      satelliteEmbedUrl: 'https://maps.google.com/maps?q=19.1272,72.9078&t=k&hl=en&z=15&output=embed',
+      vicinityLandmarks: ['Powai Lake Freshwater Basin', 'IIT Bombay Main Academic Area', 'Hiranandani Complex Towers', 'Sanjay Gandhi National Park Foothills'],
+      bodiesOfWater: ['Powai Lake Basin', 'Vihar Lake Catchment Canal', 'Mithi River Drainage Outflow'],
+      transitArteries: ['Jogeshwari–Vikhroli Link Road (JVLR)', 'Adi Shankaracharya Marg', 'Saki Vihar Road'],
+      topologicalSummary: 'High-resolution vertical nadir satellite orthophoto over Powai freshwater reservoir framed by IIT Bombay forested campus and dense urban infrastructure.'
     },
     baseNdvi: 0.48,
     baseNdwi: 0.52,
@@ -151,77 +151,77 @@ export const PRESET_SCENES: SatelliteScene[] = [
   },
   {
     id: 'agriculture_pivot',
-    title: 'Center-Pivot Farmlands',
-    subtitle: 'Intensive agricultural crop circles & irrigation networks',
+    title: 'Punjab Agricultural Breadbasket',
+    subtitle: 'Nadir orthophoto: Irrigated wheat-paddy mosaics & canal networks, Ludhiana',
     imageSrc: '/assets/sat_crop_fields.jpg',
-    coordinates: '36°21\'15"N, 100°45\'08"W',
-    gsdResolution: '0.5 m/px',
-    satellitePlatform: 'Landsat-9 OLI-2 / Sentinel-2A',
+    coordinates: '30°54\'04"N, 75°51\'26"E',
+    gsdResolution: '0.40 m/px',
+    satellitePlatform: 'ISRO Cartosat / Sentinel-2 MSI',
     defaultQuerySuggestions: [
-      'Analyze crop health and irrigation uniformity across circles',
-      'Identify unplanted or stressed agricultural sectors',
-      'Explain the vegetation density in simple layman language',
-      'Detect water table stress and soil moisture variances'
+      'Analyze crop health and irrigation uniformity across agricultural parcels',
+      'Identify unplanted or fallow soil sectors across the canal zone',
+      'Explain the vegetation chlorophyll density in simple layman terms',
+      'Detect canal moisture variance and agricultural parcel boundaries'
     ],
     domainCategory: 'Agriculture & NDVI',
-    geographicLocation: 'High Plains Ogallala Aquifer, Texas-Oklahoma, USA',
-    googleMapsUrl: 'https://www.google.com/maps/search/?api=1&query=36.3541,-100.7522',
-    embedMapsUrl: 'https://maps.google.com/maps?q=36.3541,-100.7522&hl=en&z=14&output=embed',
-    satelliteEmbedUrl: 'https://maps.google.com/maps?q=36.3541,-100.7522&t=k&hl=en&z=14&output=embed',
+    geographicLocation: 'Ludhiana Agricultural District, Punjab 141004, India',
+    googleMapsUrl: 'https://www.google.com/maps/search/?api=1&query=30.9010,75.8573',
+    embedMapsUrl: 'https://maps.google.com/maps?q=30.9010,75.8573&hl=en&z=14&output=embed',
+    satelliteEmbedUrl: 'https://maps.google.com/maps?q=30.9010,75.8573&t=k&hl=en&z=14&output=embed',
     detectedLocation: {
-      locationName: 'Ogallala Aquifer Center-Pivot Farmlands, Perryton, Texas 79070, USA',
-      coordinates: '36°21\'15"N, 100°45\'08"W',
-      latitude: 36.3541,
-      longitude: -100.7522,
-      googleMapsUrl: 'https://www.google.com/maps/search/?api=1&query=36.3541,-100.7522',
-      embedUrl: 'https://maps.google.com/maps?q=36.3541,-100.7522&hl=en&z=14&output=embed',
-      satelliteEmbedUrl: 'https://maps.google.com/maps?q=36.3541,-100.7522&t=k&hl=en&z=14&output=embed',
-      vicinityLandmarks: ['Perryton High Plains Elevators', 'Canadian River Basin Plains', 'Ogallala Aquifer Wellheads'],
-      bodiesOfWater: ['Wolf Creek Watershed', 'Playa Lake Depressions'],
-      transitArteries: ['US Highway 83', 'Texas State Highway 15', 'County Farm Roads'],
-      topologicalSummary: 'Geometric circular center-pivot irrigated crop fields forming high-contrast circular agronomic mosaics on flat high plains.'
+      locationName: 'Ludhiana Agro-Ecosystem, Grand Trunk Road Belt, Punjab, India',
+      coordinates: '30°54\'04"N, 75°51\'26"E',
+      latitude: 30.9010,
+      longitude: 75.8573,
+      googleMapsUrl: 'https://www.google.com/maps/search/?api=1&query=30.9010,75.8573',
+      embedUrl: 'https://maps.google.com/maps?q=30.9010,75.8573&hl=en&z=14&output=embed',
+      satelliteEmbedUrl: 'https://maps.google.com/maps?q=30.9010,75.8573&t=k&hl=en&z=14&output=embed',
+      vicinityLandmarks: ['Punjab Agricultural University Fields', 'Sutlej River Basin Canal Branch', 'Ludhiana Agronomic Research Tract'],
+      bodiesOfWater: ['Sirhind Canal Feeder', 'Sutlej River Plain Drainage', 'Irrigation Distribution Channels'],
+      transitArteries: ['National Highway 44 (GT Road)', 'Ludhiana Bypass Expressway', 'State Highway 11'],
+      topologicalSummary: 'Top-down nadir orthophoto showing the rich alluvial agricultural belt of Punjab, capturing dense rectangular crop parcels, canal distributaries, and fertile farmsteads.'
     },
-    baseNdvi: 0.81,
-    baseNdwi: 0.14,
-    baseNdbi: -0.22,
-    baseSurfaceTemp: 28.3
+    baseNdvi: 0.74,
+    baseNdwi: 0.22,
+    baseNdbi: -0.18,
+    baseSurfaceTemp: 26.8
   },
   {
     id: 'rainforest_basin',
-    title: 'Tropical Canopy & Delta',
-    subtitle: 'Rainforest river basin, logging access corridors & deforestation',
+    title: 'Sundarbans Mangrove Delta',
+    subtitle: 'Nadir orthophoto: Tidal mangrove forest canopy & estuarine delta channels',
     imageSrc: '/assets/sat_forest_river.jpg',
-    coordinates: '03°12\'44"S, 60°02\'19"W',
-    gsdResolution: '0.4 m/px',
-    satellitePlatform: 'PlanetScope / Sentinel-2 SWIR',
+    coordinates: '21°56\'59"N, 88°54\'01"E',
+    gsdResolution: '0.45 m/px',
+    satellitePlatform: 'ISRO Oceansat-3 / Sentinel-2 SWIR',
     defaultQuerySuggestions: [
-      'Explain the deforestation boundary in simple natural language',
-      'Evaluate river sedimentation and erosion along the banks',
-      'Identify illegal logging roads or clearcut corridors',
-      'Calculate remaining dense canopy vs cleared land'
+      'Explain the mangrove forest boundary and tidal estuarine channels',
+      'Evaluate river sedimentation and erosion along the delta banks',
+      'Identify mangrove canopy density vs tidal mudflats',
+      'Calculate ratio of dense mangrove canopy vs estuarine waterways'
     ],
-    domainCategory: 'Forestry & Climate',
-    geographicLocation: 'Amazon Basin River Confluence, Amazonas, Brazil',
-    googleMapsUrl: 'https://www.google.com/maps/search/?api=1&query=-3.2122,-60.0386',
-    embedMapsUrl: 'https://maps.google.com/maps?q=-3.2122,-60.0386&hl=en&z=14&output=embed',
-    satelliteEmbedUrl: 'https://maps.google.com/maps?q=-3.2122,-60.0386&t=k&hl=en&z=14&output=embed',
+    domainCategory: 'Forestry & Coastal Ecology',
+    geographicLocation: 'Sundarbans National Park & Biosphere Reserve, West Bengal 743370, India',
+    googleMapsUrl: 'https://www.google.com/maps/search/?api=1&query=21.9497,88.9004',
+    embedMapsUrl: 'https://maps.google.com/maps?q=21.9497,88.9004&hl=en&z=13&output=embed',
+    satelliteEmbedUrl: 'https://maps.google.com/maps?q=21.9497,88.9004&t=k&hl=en&z=13&output=embed',
     detectedLocation: {
-      locationName: 'Rio Negro & Amazon River Basin, Manaus, Amazonas 69000-000, Brazil',
-      coordinates: '03°12\'44"S, 60°02\'19"W',
-      latitude: -3.2122,
-      longitude: -60.0386,
-      googleMapsUrl: 'https://www.google.com/maps/search/?api=1&query=-3.2122,-60.0386',
-      embedUrl: 'https://maps.google.com/maps?q=-3.2122,-60.0386&hl=en&z=14&output=embed',
-      satelliteEmbedUrl: 'https://maps.google.com/maps?q=-3.2122,-60.0386&t=k&hl=en&z=14&output=embed',
-      vicinityLandmarks: ['Encontro das Águas Confluence', 'Anavilhanas Archipelago Margin', 'Adolpho Ducke Forest Reserve'],
-      bodiesOfWater: ['Rio Negro', 'Amazon River (Rio Solimões)', 'Tarumã-Açu River'],
-      transitArteries: ['AM-070 Highway', 'Manaus Floating Port Terminal', 'Rio Negro Bridge'],
-      topologicalSummary: 'Dense primary tropical rainforest canopy intersected by high-sediment river corridors and dendritic drainage tributaries.'
+      locationName: 'Sundarbans UNESCO World Heritage Delta, South 24 Parganas, West Bengal, India',
+      coordinates: '21°56\'59"N, 88°54\'01"E',
+      latitude: 21.9497,
+      longitude: 88.9004,
+      googleMapsUrl: 'https://www.google.com/maps/search/?api=1&query=21.9497,88.9004',
+      embedUrl: 'https://maps.google.com/maps?q=21.9497,88.9004&hl=en&z=13&output=embed',
+      satelliteEmbedUrl: 'https://maps.google.com/maps?q=21.9497,88.9004&t=k&hl=en&z=13&output=embed',
+      vicinityLandmarks: ['Sundarbans Tiger Reserve Core', 'Sajnekhali Bird Sanctuary', 'Matla River Estuary', 'Piramal Island Mangrove Reach'],
+      bodiesOfWater: ['Matla Estuarine Channel', 'Bidya River Basin', 'Bay of Bengal Tidal Creek System'],
+      transitArteries: ['Canning Estuarine Ferry Channel', 'Delta Waterway Route 1', 'Gosaba Marine Access'],
+      topologicalSummary: 'Nadir satellite orthophoto of the world\'s largest mangrove delta ecosystem, detailing dense halophytic mangrove canopy, tidal distributaries, and estuarine sediment channels.'
     },
-    baseNdvi: 0.89,
-    baseNdwi: 0.48,
-    baseNdbi: -0.45,
-    baseSurfaceTemp: 25.1
+    baseNdvi: 0.82,
+    baseNdwi: 0.61,
+    baseNdbi: -0.38,
+    baseSurfaceTemp: 24.6
   }
 ];
 
@@ -288,6 +288,13 @@ export interface InspectorPoint {
   surfaceType: string;
   confidence: number;
   colorHex: string;
+  r?: number;
+  g?: number;
+  b?: number;
+  brightness?: number;
+  latitude?: number;
+  longitude?: number;
+  isLiveSampled?: boolean;
 }
 
 export interface TemporalYearData {
@@ -316,4 +323,6 @@ export interface LocationRevisitRecord {
   aiComparativeAssessment: string;
   pastImageSrc: string;
   recentImageSrc: string;
+  keyDifferences?: string[];
+  confidenceScore?: number;
 }

@@ -110,8 +110,20 @@ function handleGeminiInferenceError(err: any, apiKey: string, model: string): vo
     errMsg.includes('quota') ||
     errMsg.includes('RESOURCE_EXHAUSTED');
 
+  const isNotFound =
+    err?.status === 'NOT_FOUND' ||
+    err?.code === 404 ||
+    errMsg.includes('not available') ||
+    errMsg.includes('no longer available') ||
+    errMsg.includes('NOT_FOUND') ||
+    errMsg.includes('404');
+
   if (isQuota) {
     registerModelQuotaCooldown(apiKey, model, err);
+  } else if (isNotFound) {
+    const key = `${apiKey.slice(-6)}_${model}`;
+    quotaCooldowns.set(key, Date.now() + 24 * 3600 * 1000);
+    console.info(`[BHUदृष्टि Service] Model ${model} is retired or unavailable. Cooldown set.`);
   } else {
     console.info(`[BHUदृष्टि Service] Inference fallback for ${model}: ${errMsg.slice(0, 100)}`);
   }
@@ -232,7 +244,7 @@ RECOMMENDATIONS:
 - [Actionable observation or GIS recommendation 1]
 - [Actionable observation or GIS recommendation 2]`;
 
-    const models = ['gemini-3.1-flash-lite', 'gemini-3.8-flash', 'gemini-flash-latest'];
+    const models = ['gemini-3.8-flash', 'gemini-flash-latest', 'gemini-3.1-flash-lite'];
     for (const model of models) {
       if (isModelCoolingDown(apiKey, model)) {
         continue;
@@ -316,9 +328,9 @@ Current User Question: "${followUpQuestion}"
 Provide your expert answer based on the satellite imagery and context above.`;
 
     // Candidate models based on requested task complexity:
-    let modelsToTry = ['gemini-3.1-flash-lite', 'gemini-3.8-flash', 'gemini-flash-latest'];
+    let modelsToTry = ['gemini-3.8-flash', 'gemini-flash-latest', 'gemini-3.1-flash-lite'];
     if (taskComplexity === 'complex') {
-      modelsToTry = ['gemini-3.1-flash-lite', 'gemini-3.8-flash', 'gemini-flash-latest'];
+      modelsToTry = ['gemini-3.8-flash', 'gemini-flash-latest'];
     } else if (taskComplexity === 'fast') {
       modelsToTry = ['gemini-3.1-flash-lite', 'gemini-3.8-flash'];
     }
@@ -416,7 +428,7 @@ app.post('/api/grounding', async (req, res) => {
   }
 
   if (apiKey) {
-    const groundingModels = ['gemini-3.1-flash-lite', 'gemini-3.8-flash', 'gemini-flash-latest'];
+    const groundingModels = ['gemini-3.8-flash', 'gemini-flash-latest', 'gemini-3.1-flash-lite'];
 
     for (const model of groundingModels) {
       if (isModelCoolingDown(apiKey, model)) {
@@ -521,21 +533,26 @@ app.post('/api/detect-location', async (req, res) => {
     let defaultFormattedCoords = `19°07'38"N, 72°54'28"E`;
 
     const contextText = `${sceneTitle || ''} ${locationHint || ''} ${coordinatesHint || ''}`.toLowerCase();
-    if (contextText.includes('port') || contextText.includes('dock') || contextText.includes('oakland') || (coordinatesHint && coordinatesHint.includes('122°'))) {
-      defaultLat = 37.7955;
-      defaultLng = -122.3150;
-      defaultName = 'Port of Oakland & Outer Harbor, Alameda County, California, USA';
-      defaultFormattedCoords = `37°46'30"N, 122°18'22"W`;
-    } else if (contextText.includes('crop') || contextText.includes('pivot') || (coordinatesHint && coordinatesHint.includes('100°'))) {
-      defaultLat = 36.3541;
-      defaultLng = -100.7522;
-      defaultName = 'Ogallala Aquifer Center-Pivot Fields, Perryton, Texas, USA';
-      defaultFormattedCoords = `36°21'15"N, 100°45'08"W`;
-    } else if (contextText.includes('forest') || contextText.includes('amazon') || contextText.includes('river')) {
-      defaultLat = -3.2122;
-      defaultLng = -60.0386;
-      defaultName = 'Rio Negro & Amazon River Basin, Manaus, Amazonas, Brazil';
-      defaultFormattedCoords = `03°12'44"S, 60°02'19"W`;
+    if (contextText.includes('powai')) {
+      defaultLat = 19.1272;
+      defaultLng = 72.9078;
+      defaultName = 'Powai Lake & IIT Bombay Urban Watershed, Mumbai, Maharashtra 400076, India';
+      defaultFormattedCoords = `19°07'38"N, 72°54'28"E`;
+    } else if (contextText.includes('port') || contextText.includes('jnpt') || contextText.includes('dock') || contextText.includes('nhava')) {
+      defaultLat = 18.9490;
+      defaultLng = 72.9490;
+      defaultName = 'Jawaharlal Nehru Port Trust (JNPT) & Container Harbor, Navi Mumbai, Maharashtra 400707, India';
+      defaultFormattedCoords = `18°56'54"N, 72°56'58"E`;
+    } else if (contextText.includes('punjab') || contextText.includes('ludhiana') || contextText.includes('crop') || contextText.includes('agriculture') || contextText.includes('pivot')) {
+      defaultLat = 30.9010;
+      defaultLng = 75.8573;
+      defaultName = 'Ludhiana Agricultural District & Canal Irrigation Belt, Punjab, India';
+      defaultFormattedCoords = `30°54'04"N, 75°51\'26"E`;
+    } else if (contextText.includes('sundarban') || contextText.includes('delta') || contextText.includes('mangrove') || contextText.includes('forest') || contextText.includes('bengal')) {
+      defaultLat = 21.9497;
+      defaultLng = 88.9004;
+      defaultName = 'Sundarbans UNESCO Biosphere & Mangrove Delta, West Bengal, India';
+      defaultFormattedCoords = `21°56\'59"N, 88°54\'01"E`;
     } else if (coordinatesHint) {
       const parsed = parseCoordinateToDecimal(coordinatesHint);
       if (parsed && !(parsed.lat === 0 && parsed.lng === 0)) {
@@ -595,7 +612,7 @@ Provide the exact location and Google Maps coordinates in this exact JSON format
 }
 Only output valid JSON with no markdown wrapping.`;
 
-    const detectModels = ['gemini-3.1-flash-lite', 'gemini-3.8-flash', 'gemini-flash-latest'];
+    const detectModels = ['gemini-2.5-flash', 'gemini-3.1-flash-lite', 'gemini-3.8-flash', 'gemini-flash-latest'];
     for (const model of detectModels) {
       if (isModelCoolingDown(apiKey, model)) {
         continue;

@@ -181,29 +181,29 @@ export const TemporalChangeLab: React.FC<TemporalChangeLabProps> = ({ scene }) =
   return (
     <div className="w-full max-w-5xl mx-auto px-4 py-4 space-y-4">
       {/* Simulation Header */}
-      <div className="bg-white border border-[#D0E4F8] rounded-2xl p-5 shadow-sm">
-        <div className="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-[#E3F2FD]">
+      <div className="bg-[#0C172A] border border-[#182C4D] rounded-2xl p-5 shadow-xl text-white">
+        <div className="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-[#182C4D]">
           <div>
-            <h2 className="text-lg font-bold text-[#0A2239] flex items-center gap-2">
-              <Clock className="w-5 h-5 text-[#0288D1]" />
+            <h2 className="text-lg font-bold text-white flex items-center gap-2">
+              <Clock className="w-5 h-5 text-[#00E5FF]" />
               <span>3D Multi-Temporal Change & Environmental Simulator</span>
-              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[#00B0FF]/10 text-[#0288D1] border border-[#00B0FF]/30">
+              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[#00E5FF]/10 text-[#00E5FF] border border-[#00E5FF]/30 font-bold">
                 AI PREDICTIVE TWIN
               </span>
             </h2>
-            <p className="text-xs text-[#708FAE] mt-1">
+            <p className="text-xs text-slate-400 mt-1 font-mono">
               Simulate historical sensor baselines (2019) to future climate & urban stress forecasts (2030)
             </p>
           </div>
 
           {/* Scenario Selector Pills */}
-          <div className="flex items-center gap-1.5 bg-[#F0F7FF] p-1 rounded-xl border border-[#D0E4F8]">
+          <div className="flex items-center gap-1.5 bg-[#08101E] p-1 rounded-xl border border-[#182C4D]">
             <button
               onClick={() => setSimulationMode('FLOOD')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-all ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
                 simulationMode === 'FLOOD'
-                  ? 'bg-[#0288D1] text-white shadow-xs'
-                  : 'text-[#43607E] hover:text-[#0A2239]'
+                  ? 'bg-[#0088D1] text-white shadow-xs'
+                  : 'text-slate-400 hover:text-white'
               }`}
             >
               <Droplets className="w-3.5 h-3.5" />
@@ -212,10 +212,10 @@ export const TemporalChangeLab: React.FC<TemporalChangeLabProps> = ({ scene }) =
 
             <button
               onClick={() => setSimulationMode('DROUGHT')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-all ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
                 simulationMode === 'DROUGHT'
                   ? 'bg-[#E65100] text-white shadow-xs'
-                  : 'text-[#43607E] hover:text-[#0A2239]'
+                  : 'text-slate-400 hover:text-white'
               }`}
             >
               <Flame className="w-3.5 h-3.5" />
@@ -224,10 +224,10 @@ export const TemporalChangeLab: React.FC<TemporalChangeLabProps> = ({ scene }) =
 
             <button
               onClick={() => setSimulationMode('URBAN_SPRAWL')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-all ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
                 simulationMode === 'URBAN_SPRAWL'
                   ? 'bg-[#2E7D32] text-white shadow-xs'
-                  : 'text-[#43607E] hover:text-[#0A2239]'
+                  : 'text-slate-400 hover:text-white'
               }`}
             >
               <Building2 className="w-3.5 h-3.5" />
@@ -237,7 +237,7 @@ export const TemporalChangeLab: React.FC<TemporalChangeLabProps> = ({ scene }) =
         </div>
 
         {/* Interactive Satellite Time-Lapse Canvas Screen */}
-        <div className="relative w-full h-[320px] md:h-[400px] rounded-xl overflow-hidden mt-4 border border-[#D0E4F8] bg-[#0A2239] shadow-inner select-none">
+        <div className="relative w-full h-[320px] md:h-[400px] rounded-xl overflow-hidden mt-4 border border-[#182C4D] bg-[#030812] shadow-inner select-none">
           {/* Base Imagery */}
           <img
             src={scene.imageSrc}
@@ -262,8 +262,8 @@ export const TemporalChangeLab: React.FC<TemporalChangeLabProps> = ({ scene }) =
           />
 
           {/* Top-Left Year Readout Pill */}
-          <div className="absolute top-3 left-3 bg-black/80 backdrop-blur-md border border-white/20 rounded-xl px-3 py-1.5 text-white font-mono shadow-md">
-            <div className="text-[10px] text-[#00B0FF] font-bold">TIMELINE KEYFRAME</div>
+          <div className="absolute top-3 left-3 bg-[#08101E]/90 backdrop-blur-md border border-[#182C4D] rounded-xl px-3 py-1.5 text-white font-mono shadow-md">
+            <div className="text-[10px] text-[#00E5FF] font-bold">TIMELINE KEYFRAME</div>
             <div className="text-base font-bold flex items-center gap-2">
               <span>{currentYear.year}</span>
               <span
@@ -283,7 +283,7 @@ export const TemporalChangeLab: React.FC<TemporalChangeLabProps> = ({ scene }) =
           </div>
 
           {/* Top-Right Simulation Mode Tag */}
-          <div className="absolute top-3 right-3 bg-black/80 backdrop-blur-md border border-[#00B0FF]/40 rounded-xl px-3 py-1.5 text-white font-mono text-xs flex items-center gap-2">
+          <div className="absolute top-3 right-3 bg-[#08101E]/90 backdrop-blur-md border border-[#00B0FF]/40 rounded-xl px-3 py-1.5 text-white font-mono text-xs flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-[#00E676] animate-ping" />
             <span className="font-bold text-[#00E676]">
               {simulationMode === 'FLOOD'
@@ -295,9 +295,9 @@ export const TemporalChangeLab: React.FC<TemporalChangeLabProps> = ({ scene }) =
           </div>
 
           {/* Bottom Telemetry Gauges */}
-          <div className="absolute bottom-3 left-3 right-3 bg-black/80 backdrop-blur-md border border-white/20 rounded-xl p-2.5 text-white font-mono grid grid-cols-2 sm:grid-cols-4 gap-2 text-center text-xs">
-            <div className="bg-white/10 rounded-lg p-1.5">
-              <div className="text-white/60 text-[10px]">WATER LEVEL SHIFT</div>
+          <div className="absolute bottom-3 left-3 right-3 bg-[#08101E]/90 backdrop-blur-md border border-[#182C4D] rounded-xl p-2.5 text-white font-mono grid grid-cols-2 sm:grid-cols-4 gap-2 text-center text-xs">
+            <div className="bg-[#101F38] rounded-lg p-1.5 border border-[#182C4D]">
+              <div className="text-slate-400 text-[10px]">WATER LEVEL SHIFT</div>
               <div
                 className={`font-bold flex items-center justify-center gap-1 ${
                   currentYear.waterLevelDelta > 0 ? 'text-[#00B0FF]' : 'text-slate-300'
@@ -308,8 +308,8 @@ export const TemporalChangeLab: React.FC<TemporalChangeLabProps> = ({ scene }) =
               </div>
             </div>
 
-            <div className="bg-white/10 rounded-lg p-1.5">
-              <div className="text-white/60 text-[10px]">VEGETATION BIOMASS</div>
+            <div className="bg-[#101F38] rounded-lg p-1.5 border border-[#182C4D]">
+              <div className="text-slate-400 text-[10px]">VEGETATION BIOMASS</div>
               <div
                 className={`font-bold flex items-center justify-center gap-1 ${
                   currentYear.vegetationDelta > 0 ? 'text-[#00E676]' : 'text-red-400'
@@ -320,8 +320,8 @@ export const TemporalChangeLab: React.FC<TemporalChangeLabProps> = ({ scene }) =
               </div>
             </div>
 
-            <div className="bg-white/10 rounded-lg p-1.5">
-              <div className="text-white/60 text-[10px]">URBAN CONCRETE DENSITY</div>
+            <div className="bg-[#101F38] rounded-lg p-1.5 border border-[#182C4D]">
+              <div className="text-slate-400 text-[10px]">URBAN CONCRETE DENSITY</div>
               <div
                 className={`font-bold flex items-center justify-center gap-1 ${
                   currentYear.urbanDensityDelta > 0 ? 'text-amber-400' : 'text-slate-300'
@@ -332,8 +332,8 @@ export const TemporalChangeLab: React.FC<TemporalChangeLabProps> = ({ scene }) =
               </div>
             </div>
 
-            <div className="bg-white/10 rounded-lg p-1.5">
-              <div className="text-white/60 text-[10px]">SURFACE TEMPERATURE</div>
+            <div className="bg-[#101F38] rounded-lg p-1.5 border border-[#182C4D]">
+              <div className="text-slate-400 text-[10px]">SURFACE TEMPERATURE</div>
               <div className="font-bold text-amber-400">{currentYear.avgTempCelsius.toFixed(1)}°C</div>
             </div>
           </div>
@@ -341,17 +341,17 @@ export const TemporalChangeLab: React.FC<TemporalChangeLabProps> = ({ scene }) =
 
         {/* Time-Lapse Control Slider */}
         <div className="mt-4 pt-2">
-          <div className="flex items-center justify-between text-xs font-mono font-bold text-[#0A2239] mb-2">
+          <div className="flex items-center justify-between text-xs font-mono font-bold text-slate-200 mb-2">
             <span className="flex items-center gap-1.5">
-              <Clock className="w-4 h-4 text-[#0288D1]" />
+              <Clock className="w-4 h-4 text-[#00E5FF]" />
               <span>Multi-Temporal Timeline Slider:</span>
-              <strong className="text-[#0288D1]">{currentYear.label}</strong>
+              <strong className="text-[#00E5FF]">{currentYear.label}</strong>
             </span>
 
             {/* Play/Pause Button */}
             <button
               onClick={() => setIsPlaying(!isPlaying)}
-              className="px-3 py-1 bg-[#F0F7FF] hover:bg-[#E0F2FE] border border-[#D0E4F8] rounded-lg text-[#0288D1] text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
+              className="px-3 py-1 bg-[#101F38] hover:bg-[#182C4D] border border-[#182C4D] rounded-lg text-[#00E5FF] text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
             >
               {isPlaying ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
               <span>{isPlaying ? 'Pause Simulation' : 'Auto Play'}</span>
@@ -368,10 +368,10 @@ export const TemporalChangeLab: React.FC<TemporalChangeLabProps> = ({ scene }) =
               setSelectedYearIndex(Number(e.target.value));
               setIsPlaying(false);
             }}
-            className="w-full h-2 bg-[#E0F2FE] rounded-lg appearance-none cursor-pointer accent-[#0288D1]"
+            className="w-full h-2 bg-[#101F38] rounded-lg appearance-none cursor-pointer accent-[#00B0FF]"
           />
 
-          <div className="flex justify-between text-[11px] font-mono text-[#708FAE] mt-1.5">
+          <div className="flex justify-between text-[11px] font-mono text-slate-400 mt-1.5">
             {yearsData.map((yd, idx) => (
               <button
                 key={yd.year}
@@ -379,8 +379,8 @@ export const TemporalChangeLab: React.FC<TemporalChangeLabProps> = ({ scene }) =
                   setSelectedYearIndex(idx);
                   setIsPlaying(false);
                 }}
-                className={`font-semibold hover:text-[#0A2239] transition-colors ${
-                  idx === selectedYearIndex ? 'text-[#0288D1] font-bold underline' : ''
+                className={`font-semibold hover:text-white transition-colors cursor-pointer ${
+                  idx === selectedYearIndex ? 'text-[#00E5FF] font-bold underline' : ''
                 }`}
               >
                 {yd.year}
@@ -391,30 +391,30 @@ export const TemporalChangeLab: React.FC<TemporalChangeLabProps> = ({ scene }) =
       </div>
 
       {/* AI Environmental Risk Forecast Report Card */}
-      <div className="bg-white border border-[#D0E4F8] rounded-2xl p-5 shadow-sm">
-        <div className="flex items-center gap-2 pb-3 border-b border-[#E3F2FD]">
-          <div className="p-2 rounded-xl bg-[#00B0FF]/10 text-[#0288D1]">
+      <div className="bg-[#0C172A] border border-[#182C4D] rounded-2xl p-5 shadow-xl text-white">
+        <div className="flex items-center gap-2 pb-3 border-b border-[#182C4D]">
+          <div className="p-2 rounded-xl bg-[#00B0FF]/15 text-[#00E5FF]">
             <Sparkles className="w-5 h-5" />
           </div>
           <div>
-            <h3 className="text-sm font-bold text-[#0A2239]">
+            <h3 className="text-sm font-bold text-white">
               AI Environmental Risk Forecast & Terrain Assessment
             </h3>
-            <p className="text-[11px] text-[#708FAE]">
+            <p className="text-[11px] text-slate-400 font-mono">
               Multi-spectral predictive analysis grounded on remote sensing indices for {currentYear.year}
             </p>
           </div>
         </div>
 
-        <div className="mt-3 text-xs text-[#0A2239] leading-relaxed bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-3.5 font-sans">
+        <div className="mt-3 text-xs text-slate-200 leading-relaxed bg-[#08101E] border border-[#182C4D] rounded-xl p-3.5 font-sans">
           <p className="font-medium mb-2">{currentYear.briefing}</p>
 
-          <div className="mt-3 pt-3 border-t border-[#E2E8F0] grid grid-cols-1 md:grid-cols-2 gap-3 text-[11px]">
+          <div className="mt-3 pt-3 border-t border-[#182C4D] grid grid-cols-1 md:grid-cols-2 gap-3 text-[11px]">
             <div className="flex items-start gap-2">
-              <ShieldAlert className="w-4 h-4 text-amber-500 flex-shrink-0 mt-0.5" />
+              <ShieldAlert className="w-4 h-4 text-amber-400 flex-shrink-0 mt-0.5" />
               <div>
-                <strong className="text-[#0A2239] block">Critical Hazard Warning:</strong>
-                <span className="text-[#556987]">
+                <strong className="text-amber-300 block">Critical Hazard Warning:</strong>
+                <span className="text-slate-300">
                   {simulationMode === 'FLOOD'
                     ? 'Hydrodynamic surge will compromise coastal perimeter dykes and urban drainage runoff.'
                     : simulationMode === 'DROUGHT'
@@ -425,10 +425,10 @@ export const TemporalChangeLab: React.FC<TemporalChangeLabProps> = ({ scene }) =
             </div>
 
             <div className="flex items-start gap-2">
-              <Layers className="w-4 h-4 text-[#0288D1] flex-shrink-0 mt-0.5" />
+              <Layers className="w-4 h-4 text-[#00E5FF] flex-shrink-0 mt-0.5" />
               <div>
-                <strong className="text-[#0A2239] block">Recommended Geospatial Mitigation:</strong>
-                <span className="text-[#556987]">
+                <strong className="text-[#00E5FF] block">Recommended Geospatial Mitigation:</strong>
+                <span className="text-slate-300">
                   {simulationMode === 'FLOOD'
                     ? 'Establish 200m mangrove conservation buffers and stormwater retention basins.'
                     : simulationMode === 'DROUGHT'

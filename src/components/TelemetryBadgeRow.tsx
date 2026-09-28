@@ -34,7 +34,7 @@ export const TelemetryBadgeRow: React.FC<TelemetryBadgeRowProps> = ({
         {/* Cloud Vision Model Badge */}
         <div className="flex items-center gap-1.5 bg-[#0A1628] border border-[#FF8F00]/40 rounded-lg px-2.5 py-1 shadow-xs transition-all">
           <Sparkles className="w-3.5 h-3.5 text-[#FF8F00]" />
-          <span className="font-semibold text-[#FF8F00] tracking-tight">Gemini 3.8 Flash Vision</span>
+          <span className="font-semibold text-[#FF8F00] tracking-tight">Gemini 2.5 Flash (Vision)</span>
         </div>
 
         {/* Current Band Label */}
@@ -50,14 +50,15 @@ export const TelemetryBadgeRow: React.FC<TelemetryBadgeRowProps> = ({
       {onToggleSplitLens && (
         <button
           onClick={onToggleSplitLens}
-          className={`flex items-center gap-1.5 rounded-lg px-3 py-1 text-xs font-semibold border transition-all cursor-pointer flex-shrink-0 ${
+          className={`flex items-center gap-2 rounded-xl px-4 py-2 text-xs sm:text-sm font-bold border-2 transition-all cursor-pointer flex-shrink-0 active:scale-95 shadow-md ${
             showSplitLens
-              ? 'bg-[#7C4DFF] text-white border-[#B388FF] shadow-[0_0_12px_rgba(124,77,255,0.4)]'
-              : 'bg-[#0A1628] text-[#B388FF] border-[#7C4DFF]/50 hover:bg-[#7C4DFF]/15'
+              ? 'bg-[#7C4DFF] text-white border-[#B388FF] shadow-[0_0_18px_rgba(124,77,255,0.6)]'
+              : 'bg-[#101F38] text-[#B388FF] border-[#7C4DFF]/60 hover:bg-[#7C4DFF]/25 hover:border-[#B388FF]'
           }`}
+          title="Toggle interactive side-by-side dual band comparison slider"
         >
-          <SlidersHorizontal className="w-3.5 h-3.5" />
-          <span>{showSplitLens ? 'Close Split-Lens' : 'Open Split-Lens Spectral Slider'}</span>
+          <SlidersHorizontal className="w-4 h-4 text-[#B388FF]" />
+          <span>{showSplitLens ? '✕ Close Split-Lens Slider' : 'Open Split-Lens Spectral Slider'}</span>
         </button>
       )}
     </div>

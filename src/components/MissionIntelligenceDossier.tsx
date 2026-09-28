@@ -222,19 +222,19 @@ ${recommendations.map((r) => `- ${r}`).join('\n')}
   return (
     <div className="w-full max-w-5xl mx-auto px-4 py-4 space-y-4">
       {/* Top Action Ribbon */}
-      <div className="bg-white border border-[#D0E4F8] rounded-2xl p-4 shadow-sm flex flex-wrap items-center justify-between gap-3">
+      <div className="bg-[#0C172A] border border-[#182C4D] rounded-2xl p-4 shadow-xl flex flex-wrap items-center justify-between gap-3 text-white">
         <div className="flex items-center gap-2">
-          <div className="p-2 rounded-xl bg-[#0288D1]/10 text-[#0288D1]">
+          <div className="p-2 rounded-xl bg-[#00E5FF]/15 text-[#00E5FF]">
             <FileText className="w-5 h-5" />
           </div>
           <div>
-            <h2 className="text-base font-bold text-[#0A2239] flex items-center gap-2">
+            <h2 className="text-base font-bold text-white flex items-center gap-2">
               <span>Mission Intelligence Briefing Dossier</span>
-              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-red-100 text-red-700 border border-red-200">
+              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-red-950/40 text-red-400 border border-red-500/40 font-bold">
                 CLASSIFIED ISRO // EOS
               </span>
             </h2>
-            <p className="text-xs text-[#708FAE]">
+            <p className="text-xs text-slate-400 font-mono">
               Exportable scientific & defense research dossier card with natural voice audio briefing
             </p>
           </div>
@@ -248,7 +248,7 @@ ${recommendations.map((r) => `- ${r}`).join('\n')}
             className={`px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-2 transition-all shadow-xs cursor-pointer ${
               isPlayingAudio
                 ? 'bg-red-600 hover:bg-red-700 text-white animate-pulse'
-                : 'bg-[#0288D1] hover:bg-[#0277BD] text-white'
+                : 'bg-[#0088D1] hover:bg-[#0097E6] text-white shadow-[0_0_12px_rgba(0,136,209,0.4)]'
             }`}
           >
             {isPlayingAudio ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
@@ -258,10 +258,10 @@ ${recommendations.map((r) => `- ${r}`).join('\n')}
           {/* Copy Markdown */}
           <button
             onClick={handleCopyMarkdown}
-            className="px-3 py-2 bg-[#F0F7FF] hover:bg-[#E0F2FE] border border-[#D0E4F8] text-[#0288D1] rounded-xl text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
+            className="px-3 py-2 bg-[#101F38] hover:bg-[#182C4D] border border-[#182C4D] text-[#00E5FF] rounded-xl text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
             title="Copy Report to Clipboard"
           >
-            {copied ? <Check className="w-4 h-4 text-emerald-600" /> : <Copy className="w-4 h-4" />}
+            {copied ? <Check className="w-4 h-4 text-[#00E676]" /> : <Copy className="w-4 h-4" />}
             <span>{copied ? 'Copied!' : 'Copy Dossier'}</span>
           </button>
 
@@ -269,10 +269,10 @@ ${recommendations.map((r) => `- ${r}`).join('\n')}
           <button
             onClick={handleExportPngCard}
             disabled={isExporting}
-            className="px-3 py-2 bg-[#2E7D32] hover:bg-[#1B5E20] text-white rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all shadow-xs cursor-pointer"
+            className="px-3 py-2 bg-[#00E676] hover:bg-[#00C853] text-black font-extrabold rounded-xl text-xs flex items-center gap-1.5 transition-all shadow-[0_0_12px_rgba(0,230,118,0.3)] cursor-pointer"
             title="Download PNG Dossier Card"
           >
-            <Download className="w-4 h-4" />
+            <Download className="w-4 h-4 text-black" />
             <span>{isExporting ? 'Generating...' : 'Export PNG Card'}</span>
           </button>
         </div>

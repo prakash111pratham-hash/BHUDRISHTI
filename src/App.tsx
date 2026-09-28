@@ -53,10 +53,15 @@ export function App() {
   const [savedAnalyses, setSavedAnalyses] = useState<AnalysisRecord[]>(getSavedAnalyses());
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [isGroundingLoading, setIsGroundingLoading] = useState<boolean>(false);
-  const [showCinematicOpening, setShowCinematicOpening] = useState<boolean>(true);
+  const [showCinematicOpening, setShowCinematicOpening] = useState<boolean>(false);
   const [showHistorySheet, setShowHistorySheet] = useState<boolean>(false);
   const [showApiKeyDialog, setShowApiKeyDialog] = useState<boolean>(false);
   const [showSplitLens, setShowSplitLens] = useState<boolean>(false);
+
+  // Automatically execute initial analysis on launch so the platform is completely loaded and active
+  useEffect(() => {
+    handleRunAnalysis(PRESET_SCENES[0].defaultQuerySuggestions[0]);
+  }, []);
 
   // Auto-dismiss toast after 3 seconds
   useEffect(() => {
@@ -68,10 +73,41 @@ export function App() {
 
   const handleSelectScene = (scene: SatelliteScene) => {
     setCurrentScene(scene);
-    setAnalysisStatus('idle');
-    setAnalysisResult(null);
     setChatMessages([]);
     setUserQuery('');
+    handleRunAnalysisForScene(scene, scene.defaultQuerySuggestions[0]);
+  };
+
+  const handleRunAnalysisForScene = async (targetScene: SatelliteScene, queryToRun?: string) => {
+    const prompt = (queryToRun || targetScene.defaultQuerySuggestions[0]).trim();
+    setAnalysisStatus('analyzing');
+    setErrorMessage('');
+    setChatMessages([]);
+
+    try {
+      const result = await executeSceneAnalysis(
+        targetScene,
+        prompt,
+        spectralMode,
+        customApiKey
+      );
+      setAnalysisResult(result);
+      setAnalysisStatus('success');
+
+      // Auto-save analysis
+      const updatedRecords = saveAnalysisRecord(
+        targetScene,
+        prompt,
+        result,
+        SPECTRAL_MODES[spectralMode].label
+      );
+      setSavedAnalyses(updatedRecords);
+    } catch (err: unknown) {
+      console.error('Analysis error:', err);
+      const msg = err instanceof Error ? err.message : 'Analysis failed. Please check connection.';
+      setErrorMessage(msg);
+      setAnalysisStatus('error');
+    }
   };
 
   const handleSaveApiKey = (key: string) => {
@@ -311,7 +347,10 @@ export function App() {
             {/* Split-Lens Comparator View (If toggled) */}
             {showSplitLens && (
               <div className="w-full max-w-[1520px] mx-auto px-4 py-2">
-                <SplitLensViewer scene={currentScene} />
+                <SplitLensViewer
+                  scene={currentScene}
+                  onClose={() => setShowSplitLens(false)}
+                />
               </div>
             )}
 
@@ -329,6 +368,8 @@ export function App() {
               onAskAboutPoint={handleAskAboutPoint}
               onCustomImageSelected={handleCustomImageSelected}
               customApiKey={customApiKey}
+              analysisStatus={analysisStatus}
+              analysisResult={analysisResult}
             />
 
             {/* Result State Section below Command Center */}

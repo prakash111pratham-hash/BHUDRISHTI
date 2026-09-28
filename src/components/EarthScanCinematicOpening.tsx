@@ -19,13 +19,15 @@ export const EarthScanCinematicOpening: React.FC<EarthScanCinematicOpeningProps>
     if (flashTriggeredRef.current) return;
     flashTriggeredRef.current = true;
 
-    // Phase 1: Pure white burst
+    // Phase 1: Pure white burst expands over viewport
     setFlashStage('flash');
 
-    // Phase 2: Open app screen right as the flash covers the viewport, then fade out
+    // Phase 2: Fade from white to reveal the dashboard cleanly
     setTimeout(() => {
-      onEnterApp();
       setFlashStage('fade');
+      setTimeout(() => {
+        onEnterApp();
+      }, 650);
     }, 220);
   };
 
@@ -43,8 +45,8 @@ export const EarthScanCinematicOpening: React.FC<EarthScanCinematicOpeningProps>
         if (!isShaking) setIsShaking(true);
       }
 
-      // White flash right as video is concluding (~0.35s before end)
-      if (duration > 0 && currentTime >= duration - 0.35) {
+      // White flash right as video concludes (~0.45s before end)
+      if (duration > 0 && currentTime >= duration - 0.45) {
         executeWhiteFlashTransition();
       }
     };
@@ -91,7 +93,11 @@ export const EarthScanCinematicOpening: React.FC<EarthScanCinematicOpeningProps>
   }, []);
 
   return (
-    <div className="fixed inset-0 z-[100] bg-black flex items-center justify-center overflow-hidden select-none">
+    <div
+      className={`fixed inset-0 z-[100] flex items-center justify-center overflow-hidden select-none transition-colors duration-300 ${
+        flashStage === 'fade' ? 'bg-transparent pointer-events-none' : 'bg-black'
+      }`}
+    >
       {/* High-Quality Video Container with Camera Shake in the final moments */}
       <div
         className={`relative w-full h-full flex items-center justify-center transition-transform duration-75 ${

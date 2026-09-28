@@ -4,9 +4,10 @@ import { SatelliteScene } from '../types';
 
 interface SplitLensViewerProps {
   scene: SatelliteScene;
+  onClose?: () => void;
 }
 
-export const SplitLensViewer: React.FC<SplitLensViewerProps> = ({ scene }) => {
+export const SplitLensViewer: React.FC<SplitLensViewerProps> = ({ scene, onClose }) => {
   const [sliderPos, setSliderPos] = useState<number>(50); // percentage 0 to 100
   const [isDragging, setIsDragging] = useState<boolean>(false);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -62,37 +63,48 @@ export const SplitLensViewer: React.FC<SplitLensViewerProps> = ({ scene }) => {
   }, [isDragging, updateDivider]);
 
   return (
-    <div className="w-full bg-white border border-[#D0E4F8] rounded-2xl p-4 shadow-sm">
+    <div id="split-lens-section" className="w-full bg-[#0C172A] border-2 border-[#7C4DFF]/50 rounded-3xl p-4 md:p-5 shadow-[0_0_30px_rgba(124,77,255,0.25)] text-white animate-in fade-in duration-200">
       {/* Header bar */}
-      <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-[#E3F2FD] mb-3">
-        <div className="flex items-center gap-2">
-          <div className="p-1.5 rounded-lg bg-[#E0F2FE] text-[#0288D1]">
+      <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-[#1C3254] mb-3">
+        <div className="flex items-center gap-2.5">
+          <div className="p-2 rounded-xl bg-[#7C4DFF]/20 text-[#B388FF] border border-[#7C4DFF]/40">
             <SlidersHorizontal className="w-4 h-4" />
           </div>
           <div>
-            <h3 className="text-sm font-bold text-[#0A2239] flex items-center gap-2">
+            <h3 className="text-sm font-bold text-white flex items-center gap-2">
               <span>Split-Lens Spectral Comparator</span>
-              <span className="text-[10px] font-mono px-2 py-0.5 rounded-md bg-[#00B0FF]/10 text-[#0288D1] border border-[#00B0FF]/30">
-                ISRO / NASA DUAL-BAND
+              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[#7C4DFF]/20 text-[#B388FF] border border-[#7C4DFF]/40">
+                ACTIVE DUAL-BAND
               </span>
             </h3>
-            <p className="text-[11px] text-[#708FAE]">
-              Drag the vertical divider to contrast True Color (RGB) against live False-Color NDVI Heatmap
+            <p className="text-[11px] text-slate-400">
+              Drag the vertical divider to contrast True Color (RGB) against live False-Color NIR/NDVI Heatmap
             </p>
           </div>
         </div>
 
-        {/* Legend */}
-        <div className="flex items-center gap-2 text-[10px] font-mono">
-          <span className="flex items-center gap-1 text-[#2E7D32] bg-[#E8F5E9] px-2 py-0.5 rounded-md font-bold">
-            <span className="w-2 h-2 rounded-full bg-[#2E7D32]" /> Canopy (NDVI)
-          </span>
-          <span className="flex items-center gap-1 text-[#0288D1] bg-[#E1F5FE] px-2 py-0.5 rounded-md font-bold">
-            <span className="w-2 h-2 rounded-full bg-[#0288D1]" /> Water (NDWI)
-          </span>
-          <span className="flex items-center gap-1 text-[#E65100] bg-[#FFF3E0] px-2 py-0.5 rounded-md font-bold">
-            <span className="w-2 h-2 rounded-full bg-[#E65100]" /> Urban Heat
-          </span>
+        {/* Legend & Close Button */}
+        <div className="flex items-center gap-2.5">
+          <div className="hidden sm:flex items-center gap-2 text-[10px] font-mono">
+            <span className="flex items-center gap-1 text-[#00E676] bg-[#00E676]/10 px-2 py-0.5 rounded-md border border-[#00E676]/30 font-bold">
+              <span className="w-2 h-2 rounded-full bg-[#00E676]" /> Canopy (NDVI)
+            </span>
+            <span className="flex items-center gap-1 text-[#00E5FF] bg-[#00E5FF]/10 px-2 py-0.5 rounded-md border border-[#00E5FF]/30 font-bold">
+              <span className="w-2 h-2 rounded-full bg-[#00E5FF]" /> Water (NDWI)
+            </span>
+          </div>
+
+          {onClose && (
+            <button
+              onClick={onClose}
+              className="p-1.5 rounded-xl bg-[#101F38] hover:bg-[#182C4D] text-slate-400 hover:text-white border border-[#1C3660] transition-colors cursor-pointer"
+              title="Close Split-Lens View"
+            >
+              <span className="text-xs font-bold px-2 py-0.5 flex items-center gap-1">
+                <span>✕ Close Slider</span>
+              </span>
+            </button>
+          )}
         </div>
       </div>
 
@@ -101,7 +113,7 @@ export const SplitLensViewer: React.FC<SplitLensViewerProps> = ({ scene }) => {
         ref={containerRef}
         onMouseDown={handleMouseDown}
         onTouchStart={handleTouchStart}
-        className="relative w-full h-[320px] md:h-[420px] rounded-xl overflow-hidden select-none cursor-ew-resize border border-[#D0E4F8] bg-[#0A2239] shadow-inner"
+        className="relative w-full h-[320px] md:h-[420px] rounded-2xl overflow-hidden select-none cursor-ew-resize border border-[#1C3660] bg-[#030812] shadow-inner"
       >
         {/* Layer 2: False-Color NIR / NDVI Heatmap (Underneath, full width) */}
         <div className="absolute inset-0 w-full h-full overflow-hidden">
