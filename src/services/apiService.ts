@@ -3,9 +3,11 @@ import {
   PixelMetrics,
   analyzeImagePixels,
   answerFollowUpFromPixels,
+  compareTwoImagePixels,
   createFallbackMetrics,
   generatePixelGroundedAnalysis,
-  loadImage
+  loadImage,
+  BiTemporalComparisonResult
 } from '../utils/pixelAnalyzer';
 
 const STORAGE_KEY = 'bhu_drishti_saved_analyses';
@@ -240,10 +242,10 @@ function parseGeminiRawResponse(
     : scene.embedMapsUrl || `https://maps.google.com/maps?q=${encodeURIComponent(finalPlace)}&hl=en&z=14&output=embed`;
 
     const cleanModelName = (modelUsed || 'gemini-2.5-flash')
-      .replace(/gemini-3\.[0-9]-flash.*/i, 'Gemini 2.5 Flash')
-      .replace(/gemini-2\.5-flash/i, 'Gemini 2.5 Flash')
-      .replace(/gemini-2\.0-flash/i, 'Gemini 2.0 Flash')
-      .replace(/gemini-1\.5-flash/i, 'Gemini 1.5 Flash');
+      .replace(/gemini-3\.1-flash-lite/i, 'Gemini 3.1 Flash Lite')
+      .replace(/gemini-3\.[0-9]-flash.*/i, 'Gemini 3.8 Flash')
+      .replace(/gemini-2\.5-flash-lite/i, 'Gemini 2.5 Flash Lite')
+      .replace(/gemini-2\.5-flash/i, 'Gemini 2.5 Flash');
 
     return {
       query,
@@ -510,10 +512,22 @@ export interface CompareImagesResult {
   urbanExpansionPct: number;
   waterMoistureShiftPct: number;
   temperatureDriftCelsius: number;
+  soilShiftPct?: number;
+  ndvi1: number;
+  ndvi2: number;
+  ndwi1: number;
+  ndwi2: number;
+  ndbi1: number;
+  ndbi2: number;
+  temp1: number;
+  temp2: number;
   keyDifferences: string[];
   aiComparativeAssessment: string;
+  environmentalImpact?: string;
+  recommendations?: string[];
   confidenceScore: number;
   model?: string;
+  source: 'GEMINI_MULTIMODAL' | 'PIXEL_CALIBRATED_ENGINE';
 }
 
 export async function compareSatelliteImages(
@@ -524,62 +538,105 @@ export async function compareSatelliteImages(
   sceneTitle?: string,
   coordinates?: string,
   customApiKey?: string,
-  userQuery?: string
+  year1: string = '2021',
+  year2: string = '2026'
 ): Promise<CompareImagesResult> {
+  // 1. Always compute genuine pixel metrics on both images first
+  let metrics1: PixelMetrics;
+  let metrics2: PixelMetrics;
+
+  try {
+    const [img1, img2] = await Promise.all([loadImage(imageT1), loadImage(imageT2)]);
+    metrics1 = img1 ? analyzeImagePixels(img1) : createFallbackMetrics({});
+    metrics2 = img2 ? analyzeImagePixels(img2) : createFallbackMetrics({});
+  } catch (err) {
+    console.warn('Pixel analyzer error during dual-image load:', err);
+    metrics1 = createFallbackMetrics({});
+    metrics2 = createFallbackMetrics({});
+  }
+
+  const pixelComparison = compareTwoImagePixels(
+    metrics1,
+    metrics2,
+    labelT1 || 'Historical Pass',
+    labelT2 || 'Recent Pass',
+    year1,
+    year2
+  );
+
+  // 2. Try Gemini server-side multimodal bi-temporal comparison
   try {
     const headers: Record<string, string> = { 'Content-Type': 'application/json' };
     if (customApiKey) {
       headers['x-custom-api-key'] = customApiKey;
     }
 
-    const response = await fetch('/api/compare-images', {
+    const response = await fetch('/api/compare', {
       method: 'POST',
       headers,
       body: JSON.stringify({
-        imageT1,
-        imageT2,
-        labelT1,
-        labelT2,
-        sceneTitle,
-        coordinates,
-        userQuery,
+        imageSrc1: imageT1,
+        imageSrc2: imageT2,
+        title1: labelT1 || 'Historical Pass',
+        title2: labelT2 || 'Recent Pass',
+        year1,
+        year2,
         customApiKey
       })
     });
 
     if (response.ok) {
       const data = await response.json();
-      if (data && typeof data.canopyLossPct === 'number') {
+      if (data && data.success && typeof data.canopyLossPct === 'number') {
         return {
           canopyLossPct: data.canopyLossPct,
           urbanExpansionPct: data.urbanExpansionPct,
           waterMoistureShiftPct: data.waterMoistureShiftPct,
           temperatureDriftCelsius: data.temperatureDriftCelsius,
-          keyDifferences: data.keyDifferences || [],
-          aiComparativeAssessment: data.aiComparativeAssessment || 'Bi-temporal analysis completed.',
+          soilShiftPct: data.soilShiftPct ?? pixelComparison.soilShiftPct,
+          ndvi1: metrics1.ndviIndex,
+          ndvi2: metrics2.ndviIndex,
+          ndwi1: metrics1.ndwiIndex,
+          ndwi2: metrics2.ndwiIndex,
+          ndbi1: metrics1.ndbiIndex,
+          ndbi2: metrics2.ndbiIndex,
+          temp1: metrics1.estimatedTempCelsius,
+          temp2: metrics2.estimatedTempCelsius,
+          keyDifferences: data.keyDifferences?.length > 0 ? data.keyDifferences : pixelComparison.keyDifferences,
+          aiComparativeAssessment: data.summary || pixelComparison.summary,
+          environmentalImpact: data.environmentalImpact || pixelComparison.environmentalImpact,
+          recommendations: data.recommendations || pixelComparison.recommendations,
           confidenceScore: data.confidenceScore || 95,
-          model: data.model
+          model: data.model || 'Gemini 3.8 Flash',
+          source: 'GEMINI_MULTIMODAL'
         };
       }
     }
   } catch (err) {
-    console.warn('compareSatelliteImages request error:', err);
+    console.warn('/api/compare request failed, using pixel engine:', err);
   }
 
-  // Client-side deterministic calculation fallback
+  // 3. Deterministic verified pixel fallback
   return {
-    canopyLossPct: -15.4,
-    urbanExpansionPct: 26.8,
-    waterMoistureShiftPct: -7.9,
-    temperatureDriftCelsius: 2.1,
-    keyDifferences: [
-      `Spectral albedo differentiation detected between ${labelT1 || 'Historical Pass'} and ${labelT2 || 'Recent Pass'}.`,
-      'Vegetation chlorophyll absorption shows localized reduction across clearing corridors.',
-      'Impervious concrete and structural ground cover increased with measurable thermal gain.',
-      'Surface moisture indices indicate slight hydrologic boundary shrinkage along perimeter.'
-    ],
-    aiComparativeAssessment: `Dual-image sensor comparison demonstrates measurable spatial transitions between ${labelT1 || 'T1'} and ${labelT2 || 'T2'}. Observable shifts include urban infrastructure densification and a +2.1°C surface heat island anomaly.`,
-    confidenceScore: 92,
-    model: 'client-fallback-engine'
+    canopyLossPct: pixelComparison.canopyLossPct,
+    urbanExpansionPct: pixelComparison.urbanExpansionPct,
+    waterMoistureShiftPct: pixelComparison.waterMoistureShiftPct,
+    temperatureDriftCelsius: pixelComparison.temperatureDriftCelsius,
+    soilShiftPct: pixelComparison.soilShiftPct,
+    ndvi1: metrics1.ndviIndex,
+    ndvi2: metrics2.ndviIndex,
+    ndwi1: metrics1.ndwiIndex,
+    ndwi2: metrics2.ndwiIndex,
+    ndbi1: metrics1.ndbiIndex,
+    ndbi2: metrics2.ndbiIndex,
+    temp1: metrics1.estimatedTempCelsius,
+    temp2: metrics2.estimatedTempCelsius,
+    keyDifferences: pixelComparison.keyDifferences,
+    aiComparativeAssessment: pixelComparison.summary,
+    environmentalImpact: pixelComparison.environmentalImpact,
+    recommendations: pixelComparison.recommendations,
+    confidenceScore: pixelComparison.confidenceScore,
+    model: 'Pixel Optical Engine (Level-2A)',
+    source: 'PIXEL_CALIBRATED_ENGINE'
   };
 }

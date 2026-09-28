@@ -320,7 +320,7 @@ export function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#060D1A] text-slate-100 pb-12 flex flex-col font-sans">
+    <div className="min-h-screen bg-[#080D0E] text-[#F2EFE8] pb-12 flex flex-col font-sans">
       {/* Navigation Top Bar with BHUदृष्टि & Workstations Menu */}
       <Navbar
         activePage={activePage}

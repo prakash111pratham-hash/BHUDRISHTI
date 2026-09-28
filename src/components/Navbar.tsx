@@ -66,29 +66,34 @@ export const Navbar: React.FC<NavbarProps> = ({
 
   return (
     <>
-      <header className="sticky top-0 z-40 bg-[#08101E]/95 backdrop-blur-md border-b border-[#14233D] px-4 py-2.5 shadow-md">
+      <header className="sticky top-0 z-40 bg-[#121516]/95 backdrop-blur-md border-b border-[#2B3030] px-4 py-2.5 shadow-md">
         <div className="max-w-[1520px] mx-auto flex items-center justify-between gap-3">
           {/* Brand Identity: BHUदृष्टि */}
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-full overflow-hidden border border-[#00B0FF]/70 shadow-[0_0_10px_rgba(0,176,255,0.4)] flex-shrink-0 bg-[#0A1628] flex items-center justify-center">
+            <div className="w-8 h-8 rounded-xl overflow-hidden border border-[#C47A4A]/50 shadow-[0_0_10px_rgba(196,122,74,0.3)] flex-shrink-0 bg-[#080D0E] flex items-center justify-center">
               <img
-                src="/assets/img_india_sat_scan.jpg"
-                alt="BHUदृष्टि India Satellite Logo"
+                src="/assets/img_bhu_drishti_icon.jpg"
+                alt="BHUदृष्टि Logo"
                 className="w-full h-full object-cover"
               />
             </div>
             <div className="flex items-center gap-2">
-              <h1 className="text-[17px] font-black tracking-wide text-white font-sans">
+              <h1 className="text-[17px] font-heading font-black tracking-wide text-[#F2EFE8]">
                 BHUदृष्टि
               </h1>
-              <span className="text-[9px] font-bold text-[#00E5FF] bg-[#00E5FF]/15 border border-[#00E5FF]/40 px-1.5 py-0.5 rounded font-mono">
+              <span className="text-[9px] font-bold text-[#E39A62] bg-[#241A15] border border-[#C47A4A]/40 px-2 py-0.5 rounded font-mono">
                 PRO
               </span>
+            </div>
+            {/* System Online Indicator from Image 2 */}
+            <div className="hidden sm:flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-[#191D1E] border border-[#2B3030] text-[10px] font-mono text-[#A8AAA4]">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#00E676] animate-pulse" />
+              <span>SYSTEM ONLINE</span>
             </div>
           </div>
 
           {/* Center Page Tabs */}
-          <nav className="hidden lg:flex items-center gap-1.5 bg-[#0C172A] p-1 rounded-xl border border-[#182C4D]">
+          <nav className="hidden lg:flex items-center gap-1.5 bg-[#080D0E] p-1 rounded-xl border border-[#2B3030]">
             {pages.map((p) => {
               const Icon = p.icon;
               const isActive = activePage === p.id;
@@ -96,10 +101,10 @@ export const Navbar: React.FC<NavbarProps> = ({
                 <button
                   key={p.id}
                   onClick={() => onSelectPage(p.id)}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer ${
+                  className={`px-3 py-1.5 rounded-lg text-xs font-heading font-medium flex items-center gap-1.5 transition-all cursor-pointer ${
                     isActive
-                      ? 'bg-[#0088D1] text-white shadow-[0_0_12px_rgba(0,136,209,0.5)]'
-                      : 'text-slate-300 hover:text-white hover:bg-white/5'
+                      ? 'bg-[#C47A4A] text-[#080D0E] font-bold shadow-[0_0_12px_rgba(196,122,74,0.3)]'
+                      : 'text-[#A8AAA4] hover:text-[#F2EFE8] hover:bg-[#191D1E]'
                   }`}
                 >
                   <Icon className="w-3.5 h-3.5" />
@@ -109,32 +114,41 @@ export const Navbar: React.FC<NavbarProps> = ({
             })}
           </nav>
 
-          {/* Right Action Icons including 3-Line Menu (replacing Operations Hammer) */}
+          {/* Right Action Icons & Explore Button */}
           <div className="flex items-center gap-2">
+            {/* Primary Action Button directly from Image 2 */}
+            <button
+              onClick={() => onSelectPage('ASSISTANTS')}
+              className="hidden md:flex items-center gap-1.5 px-3.5 py-1.5 bg-[#C47A4A] hover:bg-[#E39A62] text-[#080D0E] rounded-xl text-xs font-heading font-black transition-all cursor-pointer shadow-[0_0_14px_rgba(196,122,74,0.25)] active:scale-95"
+            >
+              <span>Explore BHUदृष्टि</span>
+              <span className="font-mono">→</span>
+            </button>
+
             {/* The 3-Line Menu Button matching user's screenshot with same functionality */}
             <button
               onClick={() => setIsHammerDrawerOpen(true)}
-              className="p-2 rounded-xl bg-[#101F38] hover:bg-[#182C4D] border border-[#1C3660] hover:border-[#00E5FF]/50 transition-all cursor-pointer flex items-center justify-center shadow-xs active:scale-95"
+              className="p-2 rounded-xl bg-[#191D1E] hover:bg-[#241A15] border border-[#2B3030] hover:border-[#C47A4A]/50 transition-all cursor-pointer flex items-center justify-center shadow-xs active:scale-95"
               title="Workstation Launcher Menu"
               aria-label="Workstation Launcher Menu"
             >
               <div className="w-5 h-3.5 flex flex-col justify-between items-center">
-                <span className="w-full h-[2.5px] bg-white rounded-full block" />
-                <span className="w-full h-[2.5px] bg-white rounded-full block" />
-                <span className="w-full h-[2.5px] bg-white rounded-full block" />
+                <span className="w-full h-[2px] bg-[#F2EFE8] rounded-full block" />
+                <span className="w-full h-[2px] bg-[#F2EFE8] rounded-full block" />
+                <span className="w-full h-[2px] bg-[#F2EFE8] rounded-full block" />
               </div>
             </button>
 
             {/* Saved Missions Drawer */}
             <button
               onClick={onOpenHistory}
-              className="p-1.5 rounded-lg text-slate-300 hover:text-[#00E5FF] hover:bg-white/5 transition-colors relative"
+              className="p-1.5 rounded-lg text-[#A8AAA4] hover:text-[#F2EFE8] hover:bg-[#191D1E] transition-colors relative"
               title="Mission History Archive"
               aria-label="Saved Analyses"
             >
               <Bookmark className="w-4 h-4" />
               {savedCount > 0 && (
-                <span className="absolute top-0.5 right-0.5 w-3.5 h-3.5 bg-[#FF6F00] text-white rounded-full text-[8px] font-bold flex items-center justify-center">
+                <span className="absolute top-0.5 right-0.5 w-3.5 h-3.5 bg-[#C47A4A] text-[#080D0E] rounded-full text-[8px] font-black flex items-center justify-center">
                   {savedCount}
                 </span>
               )}

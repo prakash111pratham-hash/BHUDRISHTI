@@ -1,10 +1,37 @@
 @import "tailwindcss";
 
+@theme {
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-heading: 'Poppins', 'Inter', sans-serif;
+  --font-mono: 'Space Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+  /* BHUदृष्टि Official Brand Design System Palette */
+  --color-void: #080D0E;
+  --color-carbon: #121516;
+  --color-gunmetal: #191D1E;
+  --color-lunar: #F2EFE8;
+  --color-dust: #A8AAA4;
+  --color-ash: #6F7471;
+  --color-copper: #C47A4A;
+  --color-ember: #E39A62;
+  --color-signal-red: #C94B3C;
+  --color-steel: #2B3030;
+  --color-copper-wash: #241A15;
+}
+
 @layer base {
   body {
-    background-color: #060D1A;
-    color: #F1F5F9;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    background-color: #080D0E;
+    color: #F2EFE8;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Poppins', 'Inter', sans-serif;
+  }
+  
+  code, pre, .font-mono {
+    font-family: 'Space Mono', monospace;
   }
 }
 
@@ -51,4 +78,30 @@
 .cinematic-shake {
   animation: cinematicShake 0.1s ease-in-out infinite;
   will-change: transform;
+}
+
+/* BHUदृष्टि Design System Utility Classes */
+.bg-void { background-color: #080D0E; }
+.bg-carbon { background-color: #121516; }
+.bg-gunmetal { background-color: #191D1E; }
+.bg-copper { background-color: #C47A4A; }
+.bg-copper-wash { background-color: #241A15; }
+.bg-ember { background-color: #E39A62; }
+
+.text-lunar { color: #F2EFE8; }
+.text-dust { color: #A8AAA4; }
+.text-ash { color: #6F7471; }
+.text-copper { color: #C47A4A; }
+.text-ember { color: #E39A62; }
+.text-signal-red { color: #C94B3C; }
+
+.border-steel { border-color: #2B3030; }
+.border-copper { border-color: #C47A4A; }
+.border-copper-30 { border-color: rgba(196, 122, 74, 0.3); }
+
+.copper-glow {
+  box-shadow: 0 0 20px rgba(196, 122, 74, 0.2);
+}
+.copper-glow-sm {
+  box-shadow: 0 0 10px rgba(196, 122, 74, 0.15);
 }
